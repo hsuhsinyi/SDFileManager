@@ -326,11 +326,15 @@ public class MainActivity extends FragmentActivity {
 			System.out.println("now is landscape");
 			// screenW = getScreenWidth();
 			InitWidth();
+			InitTextView();
+			InitViewPager();
 		}
 		if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
 			System.out.println("now is portrait");
 			// screenW = getScreenWidth();
 			InitWidth();
+			InitTextView();
+			InitViewPager();
 		}
 		super.onConfigurationChanged(newConfig);
 	}
