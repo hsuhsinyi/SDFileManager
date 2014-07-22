@@ -5,7 +5,7 @@ import java.util.Iterator;
   
 /** 
  * 判断文件类型 
- * MediaScanner helper class. 
+ * JudgeMediaFileType helper class. 
  */  
 public class JudgeMediaFileType {  
     // comma separated list of all file extensions supported by the media scanner  
@@ -195,7 +195,7 @@ public class JudgeMediaFileType {
         }  
         return false;  
     }  
-    
+  //根据文本文件判断文件类型  
     public static boolean isTxtFileType(File file) {  
     	String path = file.getPath();
         MediaFileType type = getFileType(path);  
@@ -204,7 +204,7 @@ public class JudgeMediaFileType {
         }  
         return false;  
     }  
-    
+  //根据apk文件判断文件类型  
     public static boolean isApkFileType(File file) {  
     	String path = file.getPath();
         MediaFileType type = getFileType(path);  

@@ -55,7 +55,6 @@ public class AllFileContentFragment extends BaseFragment {
 	private ListView listFileView;
 	private EditText editTextRename;
 	List<Map<String, Object>> filelist = null;
-	private boolean isLoad = false;
 	private static final int ITEM1 = Menu.FIRST;
 	private static final int ITEM2 = Menu.FIRST + 1;
 	private static final int ITEM3 = Menu.FIRST + 2;
@@ -78,7 +77,6 @@ public class AllFileContentFragment extends BaseFragment {
 	private View mSelectOperationBar;
 	private String currentSelectPath;
 	private MyCopyOrCutTask mcopyTask;
-	private String copyFileType;
 	private String operateCopyOrCut;
 	private String multiSelectPath;
 	// 此参数为是否是多选和正常选择状态
