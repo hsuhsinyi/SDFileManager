@@ -95,25 +95,21 @@ public class AllMediaContentFragment extends BaseFragment{
         if(getIndex() == TYPE_IMAGE){
         	imageListMode = true;
         	view = inflater.inflate(R.layout.fragment_imagecontent, container, false); 
-        	listFileView = (ListView) getActivity().findViewById(R.id.imagefile_list);  
         	System.out.println("imageMode!!!!");
         }
         if(getIndex() == TYPE_VIDEO){
         	videoListMode = true;
         	view = inflater.inflate(R.layout.fragment_videocontent, container, false); 
-        	listFileView = (ListView) getActivity().findViewById(R.id.videofile_list);
         	System.out.println("videoMode!!!!");
         }
         if(getIndex() == TYPE_AUDIO){
         	audioListMode = true;
         	view = inflater.inflate(R.layout.fragment_audiocontent, container, false); 
-        	listFileView = (ListView) getActivity().findViewById(R.id.audiofile_list);
         	System.out.println("audioMode!!!!");
         }
         if(getIndex() == TYPE_APK){
         	audioListMode = true;
         	view = inflater.inflate(R.layout.fragment_apkcontent, container, false); 
-        	listFileView = (ListView) getActivity().findViewById(R.id.apkfile_list);
         	System.out.println("audioMode!!!!");
         }
         return view;  
@@ -124,6 +120,8 @@ public class AllMediaContentFragment extends BaseFragment{
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
+
+		
 	}
 	
 	public void startloadListData(){
@@ -151,12 +149,14 @@ public class AllMediaContentFragment extends BaseFragment{
 				filelist.clear();
 			}
 			filelist = buildListForSimpleAdapter(params[0]);
+
 			return null;
 		}
 		@Override
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 	        if(getIndex() == TYPE_IMAGE){
+	        	listFileView = (ListView) getActivity().findViewById(R.id.imagefile_list);
 	        	imageListMode = true;
 				mImageSimpleAdapter = new mediaFileAdapter(getActivity(), filelist, R.layout.listrow_media, 
 						new String[] {"image", "name", "path"}, 
@@ -164,6 +164,7 @@ public class AllMediaContentFragment extends BaseFragment{
 			listFileView.setAdapter(mImageSimpleAdapter);
 	        	//System.out.println("imageMode!!!!");
 	        }else if(getIndex() == TYPE_VIDEO){
+	        	listFileView = (ListView) getActivity().findViewById(R.id.videofile_list);
 	        	videoListMode = true;
 				mVideoSimAdapter = new mediaFileAdapter(getActivity(), filelist, R.layout.listrow_media, 
 						new String[] {"image", "name", "path"}, 
@@ -171,6 +172,7 @@ public class AllMediaContentFragment extends BaseFragment{
 			listFileView.setAdapter(mVideoSimAdapter);
 	        	//System.out.println("videoMode!!!!");
 	        }else if(getIndex() == TYPE_AUDIO){
+	        	listFileView = (ListView) getActivity().findViewById(R.id.audiofile_list);
 	        	audioListMode = true;
 				mAudioSimpleAdapter = new mediaFileAdapter(getActivity(), filelist, R.layout.listrow_media, 
 						new String[] {"image", "name", "path"}, 
@@ -178,6 +180,7 @@ public class AllMediaContentFragment extends BaseFragment{
 			listFileView.setAdapter(mAudioSimpleAdapter);
 	        	//System.out.println("audioMode!!!!");
 	        }else if(getIndex() == TYPE_APK){
+	        	listFileView = (ListView) getActivity().findViewById(R.id.apkfile_list);
 	        	audioListMode = true;
 	        	mApkSimpleAdapter = new mediaFileAdapter(getActivity(), filelist, R.layout.listrow_media, 
 						new String[] {"image", "name", "path"}, 
