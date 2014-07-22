@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, MainActivity!</string>
+    <string name="app_name">SDFileExporer</string>
+    <string name="tab_1">SD卡</string>
+    <string name="tab_2">图片</string>
+    <string name="tab_3">视频</string>
+    <string name="tab_4">安装包</string>
+
+</resources>
