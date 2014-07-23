@@ -114,7 +114,7 @@ public class JudgeMediaFileType {
         
         addFileType("TXT", FILE_TYPE_TXT, "txt/txt");  
         
-        addFileType("APK", FILE_TYPE_APK, "application/apk");
+        addFileType("APK", FILE_TYPE_APK, "txt/apk");
   
         // compute file extensions list for native Media Scanner  
         StringBuilder builder = new StringBuilder();  

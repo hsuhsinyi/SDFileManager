@@ -183,6 +183,18 @@ public class AllFileContentFragment extends BaseFragment {
 						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						Uri uri = Uri.fromFile(file);
 						intent.setDataAndType(uri, "text/plain");
+					} else if (JudgeMediaFileType.isApkFileType(file)) {
+						Intent intent = new Intent();
+						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						intent.setAction(android.content.Intent.ACTION_VIEW);
+						intent.setDataAndType(Uri.fromFile(file),
+								"application/vnd.android.package-archive");
+						startActivity(intent);
+//						Intent intent = new Intent("android.intent.action.VIEW");
+//						intent.addCategory("android.intent.category.DEFAULT");
+//						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//						Uri uri = Uri.fromFile(file);
+//						intent.setDataAndType(uri, "text/plain");
 					}
 					currentPath = file.getParentFile().getAbsolutePath();
 				}
@@ -245,6 +257,17 @@ public class AllFileContentFragment extends BaseFragment {
 				} else if (JudgeMediaFileType.isTxtFileType(file)) {
 					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("image", R.drawable.file_icon_txt);
+					map.put("name", file.getName());
+					time = file.lastModified();
+					SimpleDateFormat formatter = new SimpleDateFormat(
+							"yyyy-MM-dd");
+					Date date = new Date(time);
+					map.put("modifytime", formatter.format(date));
+					map.put("path", file.getPath());
+					list.add(map);
+				} else if (JudgeMediaFileType.isApkFileType(file)) {
+					Map<String, Object> map = new HashMap<String, Object>();
+					map.put("image", R.drawable.file_icon_apk);
 					map.put("name", file.getName());
 					time = file.lastModified();
 					SimpleDateFormat formatter = new SimpleDateFormat(

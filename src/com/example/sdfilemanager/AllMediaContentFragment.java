@@ -108,9 +108,9 @@ public class AllMediaContentFragment extends BaseFragment{
         	System.out.println("audioMode!!!!");
         }
         if(getIndex() == TYPE_APK){
-        	audioListMode = true;
+        	apkListMode = true;
         	view = inflater.inflate(R.layout.fragment_apkcontent, container, false); 
-        	System.out.println("audioMode!!!!");
+        	System.out.println("apkMode!!!!");
         }
         return view;  
 	
@@ -284,7 +284,7 @@ public class AllMediaContentFragment extends BaseFragment{
 				}else if(apkListMode){
 					if(JudgeMediaFileType.isApkFileType(file)){
 						Map<String, Object> map = new HashMap<String, Object>();
-						map.put("image", R.drawable.file_icon_mp3);
+						map.put("image", R.drawable.file_icon_apk);
 						map.put("name", file.getName());
 						time = file.lastModified();
 						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
