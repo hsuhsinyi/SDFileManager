@@ -146,12 +146,13 @@ public class MainActivity extends FragmentActivity {
 					.newInstance(AllMediaContentFragment.TYPE_VIDEO);
 			chatFragment = AllMediaContentFragment
 					.newInstance(AllMediaContentFragment.TYPE_AUDIO);
-		    peopleFragment=AllMediaContentFragment.newInstance(AllMediaContentFragment.TYPE_APK);
+			peopleFragment = AllMediaContentFragment
+					.newInstance(AllMediaContentFragment.TYPE_APK);
 			fragmentsList.add(activityfragment);
-			 fragmentsList.add(groupFragment);
-			 fragmentsList.add(friendsFragment);
-			 fragmentsList.add(chatFragment);
-			 fragmentsList.add(peopleFragment);
+			fragmentsList.add(groupFragment);
+			fragmentsList.add(friendsFragment);
+			fragmentsList.add(chatFragment);
+			fragmentsList.add(peopleFragment);
 		} else {
 			activityfragment = new StorageNotReadyFragment();
 			fragmentsList.add(activityfragment);
@@ -354,7 +355,15 @@ public class MainActivity extends FragmentActivity {
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 
 		// TODO Auto-generated method stub
-		return ((BaseFragment) adapter.getItem(mPager.getCurrentItem()))
-				.onKeyUp(keyCode, event);
+		//此处使用了多态的思想：
+		//如果想要调用子类中有而父类中没有的方法，需要进行强制类型转换;
+		//因为当用父类的引用指向子类的对象，用父类引用调用方法时，找不到父类中不存在的方法,这时候需要进行向下的类型转换，将父类引用转换为子类引用
+		//当使用多态方式调用方法时，首先检查父类中是否有该方法，如果没有，则编译错误；
+		
+//		return ((BaseFragment) adapter.getItem(mPager.getCurrentItem()))
+//				.onKeyUp(keyCode, event);
+		Fragment contentFragment = adapter.getItem(mPager.getCurrentItem());
+		BaseFragment baseFragment = (BaseFragment)contentFragment;
+		return baseFragment.onKeyUp(keyCode, event);
 	}
 }

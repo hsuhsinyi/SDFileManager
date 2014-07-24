@@ -45,13 +45,6 @@ public class StorageNotReadyFragment extends Fragment {
 	private static final int ITEM1 = Menu.FIRST;
 	private static final int ITEM2 = Menu.FIRST+1;
 	
-    public static StorageNotReadyFragment newInstance(long id) {
-    	StorageNotReadyFragment cf = new StorageNotReadyFragment();
-        Bundle b = new Bundle();
-        b.putLong("ID", id);
-        cf.setArguments(b);
-        return cf;
-    }
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
