@@ -6,15 +6,15 @@
     android:id="@+id/rootlayout"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp" >
+        android:orientation="horizontal"
+        android:layout_marginTop="3dp" >
 
         <LinearLayout
-            android:id="@+id/linearLayout1"
-            android:layout_width="fill_parent"
+            android:id="@+id/layout_viewpagerhead"
+            android:layout_width="255dp"
             android:layout_height="wrap_content" >
 
             <ImageView
@@ -56,9 +56,25 @@
                 android:layout_weight="1.0"
                 android:gravity="center"
                 android:src="@drawable/category_icon_apk" />
+            
+            
+
         </LinearLayout>
 
-    </LinearLayout>
+         <ToggleButton
+             android:id="@+id/status_listorgrid"
+             android:layout_width="30dip"
+             android:layout_height="30dip"
+             android:textOn=""
+             android:textOff=""
+             android:layout_alignParentRight="true"
+             android:layout_centerVertical="true"
+             android:layout_marginRight="16dp"
+             android:layout_weight="0"
+             android:background="@layout/listbtn_view"
+             android:gravity="center_vertical" />
+
+    </RelativeLayout>
     
     
     <LinearLayout
@@ -100,10 +116,6 @@
         android:layout_height="wrap_content"
         android:text="no file"
         android:textSize="18sp" />
-    
-    
-    
-    
 
 
 </LinearLayout>

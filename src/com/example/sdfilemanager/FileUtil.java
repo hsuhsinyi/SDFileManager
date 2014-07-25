@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import android.os.Environment;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 public class FileUtil {
@@ -198,7 +197,7 @@ public class FileUtil {
 	
 
 	/**  
-	 * TODO 将Src pathname地址转换成descpathname 
+	 * TODO 将Srcpathname地址转换成descpathname 
 	 * srcPathName：源地址如：/mnt/sdcard/file.mp3
 	 * descPath 如：/mnt/sdcard/hhy
 	 * 转换成/mnt/sdcard/hhy/file.mp3

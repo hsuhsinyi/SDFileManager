@@ -2,6 +2,11 @@ package com.example.sdfilemanager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+
+
+
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -15,6 +20,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
@@ -29,6 +35,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.ViewGroup.LayoutParams;
@@ -44,6 +51,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 import android.os.Build;
 
 public class MainActivity extends FragmentActivity {
@@ -70,27 +78,14 @@ public class MainActivity extends FragmentActivity {
 	Fragment friendsFragment;
 	Fragment chatFragment;
 	Fragment peopleFragment;
-	private ScannerReceiver mScannerReceiver;
+	
 	View mConfirmOperationBar;
 	private LinearLayout linearLayout;
+	private ToggleButton listOrGridButton;
+	public final String PRESS_ACTION = "com.example.broadcast.receiver.listbuttonpressed";
+	public SharedPreferences userInfo;
 
-	private class ScannerReceiver extends BroadcastReceiver {
 
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
-			// Log.v(LOG_TAG, "received broadcast: " + action.toString());
-			// handle intents related to external storage
-			if (action.equals(Intent.ACTION_MEDIA_MOUNTED)
-					|| action.equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
-				// notifyFileChanged();
-				System.out.println("onReceiveACTION_MEDIA_MOUNTED");
-				InitWidth();
-				InitTextView();
-				InitViewPager();
-			}
-		}
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -98,22 +93,26 @@ public class MainActivity extends FragmentActivity {
 		// requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 		resources = getResources();
-		registerScannerReceiver();
+		
 		InitWidth();
 		InitTextView();
 		InitViewPager();
+		
+		userInfo = getSharedPreferences("user_info", 0);  
+		userInfo.edit().putString("listOrGrid", "list").commit();
 	}
 
-	private void registerScannerReceiver() {
-		mScannerReceiver = new ScannerReceiver();
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
-		intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
-		// intentFilter.addDataScheme("file");
-		MainActivity.this.registerReceiver(mScannerReceiver, intentFilter);
-	}
+
 
 	private void InitTextView() {
+		//动态改变viewpager的布局
+		LinearLayout viewPagerHead = (LinearLayout)findViewById(R.id.layout_viewpagerhead);
+		LayoutParams params = viewPagerHead.getLayoutParams();
+		params.width = getScreenWidth() / 2;
+		viewPagerHead.setLayoutParams(params);
+		
+		
+		
 		TabSDFile = (ImageView) findViewById(R.id.category_sd_file);
 		TabPicFile = (ImageView) findViewById(R.id.category_pic_file);
 		TabVideoFile = (ImageView) findViewById(R.id.category_video_file);
@@ -125,6 +124,30 @@ public class MainActivity extends FragmentActivity {
 		TabVideoFile.setOnClickListener(new MyOnClickListener(2));
 		TabMusicFile.setOnClickListener(new MyOnClickListener(3));
 		TabZipFile.setOnClickListener(new MyOnClickListener(4));
+		
+		listOrGridButton = (ToggleButton) findViewById(R.id.status_listorgrid);
+		listOrGridButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if(listOrGridButton.isChecked()){
+					System.out.println("listOrGridButton is checked!!!");
+					Intent intent = new Intent();
+					intent.setAction(PRESS_ACTION);
+					intent.putExtra("msg", "pressed");
+					MainActivity.this.sendBroadcast(intent);
+					userInfo.edit().putString("listOrGrid", "grid").commit(); 
+				}else{
+					System.out.println("listOrGridButton is unchecked!!!");
+					Intent intent = new Intent();
+					intent.setAction(PRESS_ACTION);
+					intent.putExtra("msg", "unpressed");
+					MainActivity.this.sendBroadcast(intent);
+					userInfo.edit().putString("listOrGrid", "list").commit(); 
+				}
+			}
+		});
 	}
 	
 	
@@ -172,7 +195,7 @@ public class MainActivity extends FragmentActivity {
 		ivBottomLine = (ImageView) findViewById(R.id.iv_bottom_line);
 		bottomLineWidth = ivBottomLine.getLayoutParams().width;
 		Log.d(TAG, "cursor imageview width=" + bottomLineWidth);
-		screenW = getScreenWidth();
+		screenW = getScreenWidth()/2;
 		int eachWith = (int) (screenW / 5.0);
 		ivBottomLine
 				.setLayoutParams(new LinearLayout.LayoutParams(eachWith, 5));
@@ -348,7 +371,7 @@ public class MainActivity extends FragmentActivity {
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		unregisterReceiver(mScannerReceiver);
+		
 	}
 
 	@Override

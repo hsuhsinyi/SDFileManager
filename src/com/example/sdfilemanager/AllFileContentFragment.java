@@ -15,9 +15,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -43,6 +46,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
@@ -53,6 +57,7 @@ public class AllFileContentFragment extends BaseFragment {
 
 	private TextView showPathView;
 	private ListView listFileView;
+	private GridView gridFileView;
 	private EditText editTextRename;
 	List<Map<String, Object>> filelist = null;
 	private static final int ITEM1 = Menu.FIRST;
@@ -87,6 +92,38 @@ public class AllFileContentFragment extends BaseFragment {
 	Button movingConfirmButton;
 	Button movingCancelButton;
 	private String currentSrcPath = null;
+	//curentShowType此参数true表示当前是gridview，false表示是listview
+	private static boolean curentShowType = true;
+	public final int  curentShowList = 1;
+	public final int  curentShowGrid = 2;
+	public View currentFileView;
+	public static String listOrGridPressed = "unpressed";
+	public final String PRESS_ACTION = "com.example.broadcast.receiver.listbuttonpressed";
+	public SharedPreferences userInfo;
+	
+	
+	private BroadcastReceiver MyBroadcastReceiver = new BroadcastReceiver(){
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			if(intent.getAction().equals(PRESS_ACTION)){  
+				System.out.println("接受到了广播");
+				listOrGridPressed = intent.getStringExtra("msg");
+				if(listOrGridPressed.equals("pressed")){
+					System.out.println("按钮按下");
+					curentShowType = false;
+					userInfo.edit().putString("listOrGrid", "grid").commit(); 
+					refreshListItem(currentPath);
+				}else if(listOrGridPressed.equals("unpressed")){
+					System.out.println("按钮没有按下");
+					curentShowType = true;
+					userInfo.edit().putString("listOrGrid", "list").commit(); 
+					refreshListItem(currentPath);
+				}
+            }  
+		}
+	};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -110,18 +147,49 @@ public class AllFileContentFragment extends BaseFragment {
 		super.onActivityCreated(savedInstanceState);
 
 		listFileView = (ListView) getActivity().findViewById(R.id.allfile_list);
+		gridFileView = (GridView) getActivity().findViewById(R.id.allgrid_list);
 		showPathView = (TextView) getActivity().findViewById(R.id.showpathview);
 		movingConfirmButton = (Button) getActivity().findViewById(
 				R.id.button_moving_confirm);
 		movingCancelButton = (Button) getActivity().findViewById(
 				R.id.button_moving_cancel);
+		
+		userInfo = getActivity().getSharedPreferences("user_info", 0);
+		String getInfoString = userInfo.getString("user_info", "");
+		System.out.println("user_info"+getInfoString);
+		if(getInfoString.equals("grid")){
+			curentShowType = false;
+		}else if(getInfoString.equals("list")){
+			curentShowType = true;
+		}
 		refreshListItem(Environment.getExternalStorageDirectory()
 				+ File.separator);
 		currentPath = Environment.getExternalStorageDirectory() + "";
 		strMultiPathArray = new ArrayList<String>();
 		listFileView.setOnCreateContextMenuListener(this);
+		gridFileView.setOnCreateContextMenuListener(this);
+		
+		
+        IntentFilter filter_press = new IntentFilter();  
+        filter_press.addAction(PRESS_ACTION);  
+        getActivity().registerReceiver(MyBroadcastReceiver, filter_press); 
+		
 	}
 
+	public void setCurrentFileView(){
+		if(curentShowType){
+			listFileView.setVisibility(View.VISIBLE);
+			gridFileView.setVisibility(View.GONE);
+			mSimpleAdapter.setShowType(curentShowList);
+			currentFileView = listFileView;
+		}else{
+			gridFileView.setVisibility(View.VISIBLE);
+			listFileView.setVisibility(View.GONE);
+			mSimpleAdapter.setShowType(curentShowGrid);
+			currentFileView = gridFileView;
+		}
+	}
+	
 	public void refreshListItem(String path) {
 		showPathView.setText(path);
 		filelist = buildListForSimpleAdapter(path);
@@ -129,9 +197,13 @@ public class AllFileContentFragment extends BaseFragment {
 				R.layout.listrow_allfile, new String[] { "image", "name",
 						"modifytime", "path" }, new int[] { R.id.imageDir,
 						R.id.name, R.id.mdtime });
+		setCurrentFileView();
 		listFileView.setAdapter(mSimpleAdapter);
 		listFileView.setOnItemClickListener(mItemClickListener);
 		listFileView.setSelection(0);
+		gridFileView.setAdapter(mSimpleAdapter);
+		gridFileView.setOnItemClickListener(mItemClickListener);
+		gridFileView.setSelection(0);
 	}
 
 	OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
@@ -144,9 +216,11 @@ public class AllFileContentFragment extends BaseFragment {
 				if (mSimpleAdapter.isSelected.get(position)) {
 					mSimpleAdapter.isSelected.put(position, false);
 					listFileView.setAdapter(mSimpleAdapter);
+					gridFileView.setAdapter(mSimpleAdapter);
 				} else if (!mSimpleAdapter.isSelected.get(position)) {
 					mSimpleAdapter.isSelected.put(position, true);
 					listFileView.setAdapter(mSimpleAdapter);
+					gridFileView.setAdapter(mSimpleAdapter);
 				}
 			} else {
 				currentPath = (String) filelist.get(position).get("path");
@@ -632,6 +706,7 @@ public class AllFileContentFragment extends BaseFragment {
 			for (int i = 0; i < filelist.size(); i++) {
 				mSimpleAdapter.isSelected.put(i, true);
 				listFileView.setAdapter(mSimpleAdapter);
+				gridFileView.setAdapter(mSimpleAdapter);
 			}
 			selectListMode = true;
 			multiSelectOption();
@@ -644,6 +719,7 @@ public class AllFileContentFragment extends BaseFragment {
 			for (int i = 0; i < filelist.size(); i++) {
 				mSimpleAdapter.isSelected.put(i, false);
 				listFileView.setAdapter(mSimpleAdapter);
+				gridFileView.setAdapter(mSimpleAdapter);
 			}
 			selectListMode = false;
 		} else if (id == 6) {
@@ -682,6 +758,7 @@ public class AllFileContentFragment extends BaseFragment {
 				for (int i = 0; i < filelist.size(); i++) {
 					mSimpleAdapter.isSelected.put(i, false);
 					listFileView.setAdapter(mSimpleAdapter);
+					gridFileView.setAdapter(mSimpleAdapter);
 				}
 				selectListMode = false;
 			}
@@ -718,6 +795,7 @@ public class AllFileContentFragment extends BaseFragment {
 					for (int i = 0; i < filelist.size(); i++) {
 						mSimpleAdapter.isSelected.put(i, false);
 						listFileView.setAdapter(mSimpleAdapter);
+						gridFileView.setAdapter(mSimpleAdapter);
 					}
 					mConfirmOperationBar.setVisibility(View.VISIBLE);
 					movingConfirmButton.setOnClickListener(listener);
@@ -746,6 +824,7 @@ public class AllFileContentFragment extends BaseFragment {
 			case R.id.button_moving_cancel:
 				mConfirmOperationBar.setVisibility(View.GONE);
 				registerForContextMenu(listFileView);
+				registerForContextMenu(gridFileView);
 				strMultiPathArray.clear();
 				break;
 			default:
@@ -777,6 +856,13 @@ public class AllFileContentFragment extends BaseFragment {
 	public void onConfigurationChanged(Configuration newConfig) {
 		// TODO Auto-generated method stub
 		super.onConfigurationChanged(newConfig);
+	}
+	
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		getActivity().unregisterReceiver(MyBroadcastReceiver);
 	}
 
 	@Override

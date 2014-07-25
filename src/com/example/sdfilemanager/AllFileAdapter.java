@@ -28,6 +28,9 @@ public class AllFileAdapter extends SimpleAdapter {
 	LayoutInflater mInflater;
 	Map<Integer, Boolean> isSelected;
 	private LayoutInflater mLayoutInflater;
+	public final int SHOW_LIST = 1;
+	public final int SHOW_GRID = 2;
+	public int show_type = SHOW_GRID;
 
 	public AllFileAdapter(Context context, List<Map<String, Object>> data,
 			int resource, String[] from, int[] to) {
@@ -57,6 +60,10 @@ public class AllFileAdapter extends SimpleAdapter {
 		// TODO Auto-generated method stub
 		return position;
 	}
+	
+	public void setShowType(int show_type){
+		this.show_type =show_type;
+	}
 
 	public final class ViewHolder {
 		private ImageView listImageView;
@@ -70,8 +77,22 @@ public class AllFileAdapter extends SimpleAdapter {
 		// TODO Auto-generated method stub
 		ViewHolder holder = null;
 		if (convertView == null) {
+			switch (show_type) {
+			case SHOW_LIST:
+				convertView = mLayoutInflater.inflate(R.layout.listrow_allfile, null);
+				System.out.println("show_list");
+				break;
+				
+			case SHOW_GRID:
+				convertView = mLayoutInflater.inflate(R.layout.gridrow_allfile, null);
+				System.out.println("show_grid");
+				break;
+
+			default:
+				break;
+			}
 			holder = new ViewHolder();
-			convertView = mLayoutInflater.inflate(R.layout.listrow_allfile, null);
+			
 			holder.listImageView = (ImageView) convertView
 					.findViewById(R.id.imageDir);
 			holder.listFileName = (TextView) convertView
