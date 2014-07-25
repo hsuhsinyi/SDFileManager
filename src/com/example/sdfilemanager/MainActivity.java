@@ -59,7 +59,7 @@ public class MainActivity extends FragmentActivity {
 	private ViewPager mPager;
 	private ArrayList<Fragment> fragmentsList;
 	private ImageView ivBottomLine;
-	private ImageView TabSDFile, TabPicFile, TabMusicFile, TabVideoFile,
+	private TextView TabSDFile, TabPicFile, TabMusicFile, TabVideoFile,
 			TabZipFile;
 
 	private int currIndex = 0;
@@ -113,11 +113,11 @@ public class MainActivity extends FragmentActivity {
 		
 		
 		
-		TabSDFile = (ImageView) findViewById(R.id.category_sd_file);
-		TabPicFile = (ImageView) findViewById(R.id.category_pic_file);
-		TabVideoFile = (ImageView) findViewById(R.id.category_video_file);
-		TabMusicFile = (ImageView) findViewById(R.id.category_music_file);
-		TabZipFile = (ImageView) findViewById(R.id.category_apk_file);
+		TabSDFile = (TextView) findViewById(R.id.category_sd_file);
+		TabPicFile = (TextView) findViewById(R.id.category_pic_file);
+		TabVideoFile = (TextView) findViewById(R.id.category_video_file);
+		TabMusicFile = (TextView) findViewById(R.id.category_music_file);
+		TabZipFile = (TextView) findViewById(R.id.category_apk_file);
 
 		TabSDFile.setOnClickListener(new MyOnClickListener(0));
 		TabPicFile.setOnClickListener(new MyOnClickListener(1));

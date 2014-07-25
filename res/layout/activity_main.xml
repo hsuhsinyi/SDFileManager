@@ -8,7 +8,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="25dp"
         android:orientation="horizontal"
         android:layout_marginTop="3dp" >
 
@@ -17,45 +17,45 @@
             android:layout_width="255dp"
             android:layout_height="wrap_content" >
 
-            <ImageView
+            <TextView
                 android:id="@+id/category_sd_file"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:gravity="center"
-                android:src="@drawable/category_icon_sd" />
+                android:text="SD卡"  />
 
-            <ImageView
+            <TextView
                 android:id="@+id/category_pic_file"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:gravity="center"
-                android:src="@drawable/category_icon_picture" />
+                android:text="图片"  />
 
-            <ImageView
+            <TextView
                 android:id="@+id/category_video_file"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:gravity="center"
-                android:src="@drawable/category_icon_video" />
+                android:text="视频"  />
 
-            <ImageView
+            <TextView
                 android:id="@+id/category_music_file"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:gravity="center"
-                android:src="@drawable/category_icon_music" />
+                android:text="音乐"  />
 
-            <ImageView
+            <TextView
                 android:id="@+id/category_apk_file"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:gravity="center"
-                android:src="@drawable/category_icon_apk" />
+                android:text="APK" />
             
             
 
@@ -63,8 +63,8 @@
 
          <ToggleButton
              android:id="@+id/status_listorgrid"
-             android:layout_width="30dip"
-             android:layout_height="30dip"
+             android:layout_width="20dip"
+             android:layout_height="20dip"
              android:textOn=""
              android:textOff=""
              android:layout_alignParentRight="true"
