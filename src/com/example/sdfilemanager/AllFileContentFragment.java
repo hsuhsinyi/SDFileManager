@@ -113,15 +113,15 @@ public class AllFileContentFragment extends BaseFragment {
 		public void onReceive(Context context, Intent intent) {
 			// TODO Auto-generated method stub
 			if(intent.getAction().equals(PRESS_ACTION)){  
-				System.out.println("接受到了广播");
+				//System.out.println("接受到了广播");
 				listOrGridPressed = intent.getStringExtra("msg");
 				if(listOrGridPressed.equals("pressed")){
-					System.out.println("按钮按下");
+				//	System.out.println("按钮按下");
 					curentShowType = false;
 					userInfo.edit().putString("listOrGrid", "grid").commit(); 
 					refreshListItem(currentPath);
 				}else if(listOrGridPressed.equals("unpressed")){
-					System.out.println("按钮没有按下");
+				//	System.out.println("按钮没有按下");
 					curentShowType = true;
 					userInfo.edit().putString("listOrGrid", "list").commit(); 
 					refreshListItem(currentPath);
@@ -163,7 +163,7 @@ public class AllFileContentFragment extends BaseFragment {
 		
 		userInfo = getActivity().getSharedPreferences("user_info", 0);
 		String getInfoString = userInfo.getString("user_info", "");
-		System.out.println("user_info"+getInfoString);
+		//System.out.println("user_info"+getInfoString);
 		if(getInfoString.equals("grid")){
 			curentShowType = false;
 		}else if(getInfoString.equals("list")){
@@ -218,7 +218,7 @@ public class AllFileContentFragment extends BaseFragment {
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
 			// TODO Auto-generated method stub
-			System.out.println("current selectmode is:" + selectListMode);
+	//		System.out.println("current selectmode is:" + selectListMode);
 			if (selectListMode) {
 				if (mSimpleAdapter.isSelected.get(position)) {
 					mSimpleAdapter.isSelected.put(position, false);
@@ -727,6 +727,7 @@ public class AllFileContentFragment extends BaseFragment {
 			refreshListItem(currentPath);
 		} else if (id == 4) {
 			selectedNum = 0;
+			selectedNumView.setText("已选择:"+selectedNum+"个");
 			selectListMode = true;
 			multiSelectOption();
 		} else if (id == 5) {
@@ -735,6 +736,7 @@ public class AllFileContentFragment extends BaseFragment {
 				mSimpleAdapter.notifyDataSetChanged();
 			}
 			selectListMode = false;
+			mSelectOperationBar.setVisibility(View.GONE);
 		} else if (id == 6) {
 			getActivity().finish();
 		} else if (id == 7) {

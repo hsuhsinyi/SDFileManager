@@ -7,7 +7,7 @@
     <LinearLayout
         android:id="@+id/current_path_pane"
         android:layout_width="match_parent"
-        android:layout_height="38dp"
+        android:layout_height="30dp"
         android:background="@drawable/secondary_title_background"
         android:gravity="center_vertical"
         android:maxWidth="300dip" >
@@ -16,7 +16,6 @@
             android:id="@+id/current_path_scroller"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dip"
             android:layout_weight="1"
             android:gravity="center_vertical" >
 
@@ -24,14 +23,16 @@
                 style="?android:attr/textAppearanceMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="当前路径:" />
+                android:text="当前路径:" 
+                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/showpathview"
                 style="?android:attr/textAppearanceMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -40,6 +41,7 @@
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/current_path_pane"
+        android:visibility="invisible"
         android:focusable="true" />
 
     <GridView
@@ -49,6 +51,7 @@
         android:layout_below="@+id/current_path_pane"
         android:horizontalSpacing="10dp"
         android:numColumns="4"
+        android:visibility="invisible"
         android:stretchMode="columnWidth"
         android:verticalSpacing="10dp" />
 
@@ -91,7 +94,6 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20dip"
             android:orientation="horizontal"
             android:gravity="center_vertical" >
             

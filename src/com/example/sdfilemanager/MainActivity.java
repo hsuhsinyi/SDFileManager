@@ -91,6 +91,9 @@ public class MainActivity extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// requestWindowFeature(Window.FEATURE_NO_TITLE);
+//		Window window = getWindow();
+//		window.requestFeature(Window.FEATURE_LEFT_ICON);
+//		window.setFeatureDrawableResource(window.FEATURE_LEFT_ICON, R.drawable.ic_launcher);
 		setContentView(R.layout.activity_main);
 		resources = getResources();
 		
@@ -108,7 +111,7 @@ public class MainActivity extends FragmentActivity {
 		//动态改变viewpager的布局
 		LinearLayout viewPagerHead = (LinearLayout)findViewById(R.id.layout_viewpagerhead);
 		LayoutParams params = viewPagerHead.getLayoutParams();
-		params.width = getScreenWidth() / 2;
+		params.width = getScreenWidth();
 		viewPagerHead.setLayoutParams(params);
 		
 		
@@ -188,21 +191,20 @@ public class MainActivity extends FragmentActivity {
 		mPager.setAdapter(adapter);
 		// mPager.setCurrentItem(0);
 		mPager.setOnPageChangeListener(new MyOnPageChangeListener());
+		mPager.setOffscreenPageLimit(4);
 	}
 
 	@SuppressLint("NewApi")
 	private void InitWidth() {
 		ivBottomLine = (ImageView) findViewById(R.id.iv_bottom_line);
 		bottomLineWidth = ivBottomLine.getLayoutParams().width;
-		Log.d(TAG, "cursor imageview width=" + bottomLineWidth);
-		screenW = getScreenWidth()/2;
+		screenW = getScreenWidth();
 		int eachWith = (int) (screenW / 5.0);
 		ivBottomLine
 				.setLayoutParams(new LinearLayout.LayoutParams(eachWith, 5));
 		// offset = (int) (screenW /10.0) - (int) (bottomLineWidth/2);
 		// ivBottomLine.setX((float)offset);
 		offset = (int) ((screenW / 5.0) / 2);
-		Log.i("MainActivity", "offset=" + offset);
 
 		position_one = (int) (screenW / 5.0);
 		position_two = (int) (screenW / 5.0) * 2;
@@ -215,12 +217,10 @@ public class MainActivity extends FragmentActivity {
 
 		public MyOnClickListener(int i) {
 			index = i;
-			System.out.println("index" + index);
 		}
 
 		@Override
 		public void onClick(View v) {
-			System.out.println("index" + index);
 			mPager.setCurrentItem(index);
 		}
 	};
