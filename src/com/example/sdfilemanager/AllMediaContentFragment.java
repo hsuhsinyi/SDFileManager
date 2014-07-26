@@ -254,7 +254,7 @@ public class AllMediaContentFragment extends BaseFragment{
 						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 						Date date = new Date(time);
 						//map.put("modifytime", formatter.format(date));
-						map.put("path", file.getPath());
+						map.put("path", file.getParentFile().getAbsolutePath());
 						list.add(map);
 					}
 				}else if(videoListMode){
@@ -266,7 +266,7 @@ public class AllMediaContentFragment extends BaseFragment{
 						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 						Date date = new Date(time);
 						//map.put("modifytime", formatter.format(date));
-						map.put("path", file.getPath());
+						map.put("path", file.getParentFile().getAbsolutePath());
 						list.add(map);
 					}
 				}else if(audioListMode){
@@ -278,7 +278,7 @@ public class AllMediaContentFragment extends BaseFragment{
 						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 						Date date = new Date(time);
 						//map.put("modifytime", formatter.format(date));
-						map.put("path", file.getPath());
+						map.put("path", file.getParentFile().getAbsolutePath());
 						list.add(map);	
 					}
 				}else if(apkListMode){
@@ -290,7 +290,7 @@ public class AllMediaContentFragment extends BaseFragment{
 						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 						Date date = new Date(time);
 						//map.put("modifytime", formatter.format(date));
-						map.put("path", file.getPath());
+						map.put("path", file.getParentFile().getAbsolutePath());
 						list.add(map);	
 					}
 				}

@@ -125,29 +125,29 @@ public class MainActivity extends FragmentActivity {
 		TabMusicFile.setOnClickListener(new MyOnClickListener(3));
 		TabZipFile.setOnClickListener(new MyOnClickListener(4));
 		
-		listOrGridButton = (ToggleButton) findViewById(R.id.status_listorgrid);
-		listOrGridButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if(listOrGridButton.isChecked()){
-					System.out.println("listOrGridButton is checked!!!");
-					Intent intent = new Intent();
-					intent.setAction(PRESS_ACTION);
-					intent.putExtra("msg", "pressed");
-					MainActivity.this.sendBroadcast(intent);
-					userInfo.edit().putString("listOrGrid", "grid").commit(); 
-				}else{
-					System.out.println("listOrGridButton is unchecked!!!");
-					Intent intent = new Intent();
-					intent.setAction(PRESS_ACTION);
-					intent.putExtra("msg", "unpressed");
-					MainActivity.this.sendBroadcast(intent);
-					userInfo.edit().putString("listOrGrid", "list").commit(); 
-				}
-			}
-		});
+		//listOrGridButton = (ToggleButton) findViewById(R.id.status_listorgrid);
+//		listOrGridButton.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+//				if(listOrGridButton.isChecked()){
+//					System.out.println("listOrGridButton is checked!!!");
+//					Intent intent = new Intent();
+//					intent.setAction(PRESS_ACTION);
+//					intent.putExtra("msg", "pressed");
+//					MainActivity.this.sendBroadcast(intent);
+//					userInfo.edit().putString("listOrGrid", "grid").commit(); 
+//				}else{
+//					System.out.println("listOrGridButton is unchecked!!!");
+//					Intent intent = new Intent();
+//					intent.setAction(PRESS_ACTION);
+//					intent.putExtra("msg", "unpressed");
+//					MainActivity.this.sendBroadcast(intent);
+//					userInfo.edit().putString("listOrGrid", "list").commit(); 
+//				}
+//			}
+//		});
 	}
 	
 	

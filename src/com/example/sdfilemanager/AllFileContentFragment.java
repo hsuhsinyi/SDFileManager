@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.example.sdfilemanager.AllFileAdapter.ViewHolder;
 
+import android.R.integer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -47,6 +48,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
@@ -71,6 +73,7 @@ public class AllFileContentFragment extends BaseFragment {
 	private static final int menuMultiSelect = 4;
 	private static final int menuCancelSelect = 5;
 	private static final int menuQuit = 6;
+	private static final int menuShowType = 7;
 	private long mExitTime = 0;
 	public static final int TYPE_ALLFILE = 1;
 	public static final int TYPE_IMAGE = 2;
@@ -100,6 +103,8 @@ public class AllFileContentFragment extends BaseFragment {
 	public static String listOrGridPressed = "unpressed";
 	public final String PRESS_ACTION = "com.example.broadcast.receiver.listbuttonpressed";
 	public SharedPreferences userInfo;
+	private int selectedNum = 0;
+	private TextView selectedNumView;
 	
 	
 	private BroadcastReceiver MyBroadcastReceiver = new BroadcastReceiver(){
@@ -149,6 +154,8 @@ public class AllFileContentFragment extends BaseFragment {
 		listFileView = (ListView) getActivity().findViewById(R.id.allfile_list);
 		gridFileView = (GridView) getActivity().findViewById(R.id.allgrid_list);
 		showPathView = (TextView) getActivity().findViewById(R.id.showpathview);
+		selectedNumView = (TextView) getActivity().findViewById(R.id.selected_num);
+		
 		movingConfirmButton = (Button) getActivity().findViewById(
 				R.id.button_moving_confirm);
 		movingCancelButton = (Button) getActivity().findViewById(
@@ -215,12 +222,14 @@ public class AllFileContentFragment extends BaseFragment {
 			if (selectListMode) {
 				if (mSimpleAdapter.isSelected.get(position)) {
 					mSimpleAdapter.isSelected.put(position, false);
-					listFileView.setAdapter(mSimpleAdapter);
-					gridFileView.setAdapter(mSimpleAdapter);
+					selectedNum--;
+					selectedNumView.setText("已选择:"+selectedNum+"个");
+					mSimpleAdapter.notifyDataSetChanged();
 				} else if (!mSimpleAdapter.isSelected.get(position)) {
 					mSimpleAdapter.isSelected.put(position, true);
-					listFileView.setAdapter(mSimpleAdapter);
-					gridFileView.setAdapter(mSimpleAdapter);
+					selectedNum++;
+					selectedNumView.setText("已选择:"+selectedNum+"个");
+					mSimpleAdapter.notifyDataSetChanged();
 				}
 			} else {
 				currentPath = (String) filelist.get(position).get("path");
@@ -668,6 +677,7 @@ public class AllFileContentFragment extends BaseFragment {
 			menu.add(0, menuRefresh, 0, "刷新");
 			menu.add(0, menuMultiSelect, 0, "多选");
 			menu.add(0, menuQuit, 0, "退出");
+			menu.add(0, menuShowType, 0, "列表方式");
 		}
 		return;
 	}
@@ -705,25 +715,47 @@ public class AllFileContentFragment extends BaseFragment {
 		} else if (id == 2) {
 			for (int i = 0; i < filelist.size(); i++) {
 				mSimpleAdapter.isSelected.put(i, true);
-				listFileView.setAdapter(mSimpleAdapter);
-				gridFileView.setAdapter(mSimpleAdapter);
+//				listFileView.setAdapter(mSimpleAdapter);
+//				gridFileView.setAdapter(mSimpleAdapter);
+				mSimpleAdapter.notifyDataSetChanged();
 			}
+			selectedNum = filelist.size();
+			selectedNumView.setText("已选择:"+selectedNum+"个");
 			selectListMode = true;
 			multiSelectOption();
 		} else if (id == 3) {
 			refreshListItem(currentPath);
 		} else if (id == 4) {
+			selectedNum = 0;
 			selectListMode = true;
 			multiSelectOption();
 		} else if (id == 5) {
 			for (int i = 0; i < filelist.size(); i++) {
 				mSimpleAdapter.isSelected.put(i, false);
-				listFileView.setAdapter(mSimpleAdapter);
-				gridFileView.setAdapter(mSimpleAdapter);
+				mSimpleAdapter.notifyDataSetChanged();
 			}
 			selectListMode = false;
 		} else if (id == 6) {
 			getActivity().finish();
+		} else if (id == 7) {
+			final CharSequence[] items = {"列表视图", "网格视图"}; 
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle("选择查看方式");
+			builder.setItems(items, new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog, int item) {
+			        //Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
+			    	if(item == 0){
+						curentShowType = true;
+						refreshListItem(currentPath);
+			    	}else if(item == 1){
+						curentShowType = false;
+						refreshListItem(currentPath);
+			    	}
+
+			    }
+			});
+			AlertDialog alert = builder.create();
+			alert.show();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -740,13 +772,13 @@ public class AllFileContentFragment extends BaseFragment {
 				R.id.button_moving_confirm);
 		movingCancelButton = (Button) getActivity().findViewById(
 				R.id.button_moving_cancel);
-		Button multiSelectCopyButton = (Button) getActivity().findViewById(
+		ImageView multiSelectCopyButton = (ImageView) getActivity().findViewById(
 				R.id.multiselect_button_copy);
-		Button multiSelectCutButton = (Button) getActivity().findViewById(
+		ImageView multiSelectCutButton = (ImageView) getActivity().findViewById(
 				R.id.multiselect_button_cut);
-		Button multiSelectDeleteButton = (Button) getActivity().findViewById(
+		ImageView multiSelectDeleteButton = (ImageView) getActivity().findViewById(
 				R.id.multiselect_button_delete);
-		Button multiSelectCancelButton = (Button) getActivity().findViewById(
+		ImageView multiSelectCancelButton = (ImageView) getActivity().findViewById(
 				R.id.multiselect_button_cancel);
 
 		multiSelectCancelButton.setOnClickListener(new OnClickListener() {
@@ -757,8 +789,7 @@ public class AllFileContentFragment extends BaseFragment {
 				mSelectOperationBar.setVisibility(View.GONE);
 				for (int i = 0; i < filelist.size(); i++) {
 					mSimpleAdapter.isSelected.put(i, false);
-					listFileView.setAdapter(mSimpleAdapter);
-					gridFileView.setAdapter(mSimpleAdapter);
+					mSimpleAdapter.notifyDataSetChanged();
 				}
 				selectListMode = false;
 			}
@@ -794,8 +825,7 @@ public class AllFileContentFragment extends BaseFragment {
 					selectListMode = false;
 					for (int i = 0; i < filelist.size(); i++) {
 						mSimpleAdapter.isSelected.put(i, false);
-						listFileView.setAdapter(mSimpleAdapter);
-						gridFileView.setAdapter(mSimpleAdapter);
+						mSimpleAdapter.notifyDataSetChanged();
 					}
 					mConfirmOperationBar.setVisibility(View.VISIBLE);
 					movingConfirmButton.setOnClickListener(listener);

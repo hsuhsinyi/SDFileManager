@@ -8,7 +8,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="32dp"
         android:orientation="horizontal"
         android:layout_marginTop="3dp" >
 
@@ -23,6 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:gravity="center"
+                android:textSize="20sp"
                 android:text="SD卡"  />
 
             <TextView
@@ -31,6 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:gravity="center"
+                android:textSize="20sp"
                 android:text="图片"  />
 
             <TextView
@@ -39,6 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:gravity="center"
+                android:textSize="20sp"
                 android:text="视频"  />
 
             <TextView
@@ -47,6 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:gravity="center"
+                android:textSize="20sp"
                 android:text="音乐"  />
 
             <TextView
@@ -55,24 +59,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:gravity="center"
+                android:textSize="20sp"
                 android:text="APK" />
             
             
 
         </LinearLayout>
 
-         <ToggleButton
-             android:id="@+id/status_listorgrid"
-             android:layout_width="20dip"
-             android:layout_height="20dip"
-             android:textOn=""
-             android:textOff=""
-             android:layout_alignParentRight="true"
-             android:layout_centerVertical="true"
-             android:layout_marginRight="16dp"
-             android:layout_weight="0"
-             android:background="@layout/listbtn_view"
-             android:gravity="center_vertical" />
+
 
     </RelativeLayout>
     
@@ -89,7 +83,7 @@
                 android:layout_width="40dip"
                 android:layout_height="2dip"
                 android:scaleType="matrix"
-                android:src="#838B8B" />
+                android:src="#000000" />
         </LinearLayout>
  
     <android.support.v4.view.ViewPager

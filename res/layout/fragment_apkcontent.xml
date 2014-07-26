@@ -4,9 +4,20 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+        <ImageView
+        android:id="@+id/current_path_pane"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/fragment_title_background"
+        android:gravity="center_vertical"
+        android:maxWidth="300dip" />
+
+
+    
 
     <ListView
         android:id="@+id/apkfile_list"
+        android:layout_below="@+id/current_path_pane"
         android:layout_width="fill_parent"
         android:layout_height="match_parent" />
     
