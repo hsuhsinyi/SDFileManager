@@ -71,13 +71,12 @@ public class MainActivity extends FragmentActivity {
 	private int position_four;
 	private Resources resources;
 	private ScanPagerAdapter adapter;
-	private long mExitTime;
 	private int screenW;
-	Fragment activityfragment;
-	Fragment groupFragment;
-	Fragment friendsFragment;
-	Fragment chatFragment;
-	Fragment peopleFragment;
+	private Fragment activityfragment;
+	private Fragment groupFragment;
+	private Fragment friendsFragment;
+	private Fragment chatFragment;
+	private Fragment peopleFragment;
 	
 	View mConfirmOperationBar;
 	private LinearLayout linearLayout;
@@ -113,9 +112,7 @@ public class MainActivity extends FragmentActivity {
 		LayoutParams params = viewPagerHead.getLayoutParams();
 		params.width = getScreenWidth();
 		viewPagerHead.setLayoutParams(params);
-		
-		
-		
+
 		TabSDFile = (TextView) findViewById(R.id.category_sd_file);
 		TabPicFile = (TextView) findViewById(R.id.category_pic_file);
 		TabVideoFile = (TextView) findViewById(R.id.category_video_file);
@@ -127,43 +124,15 @@ public class MainActivity extends FragmentActivity {
 		TabVideoFile.setOnClickListener(new MyOnClickListener(2));
 		TabMusicFile.setOnClickListener(new MyOnClickListener(3));
 		TabZipFile.setOnClickListener(new MyOnClickListener(4));
-		
-		//listOrGridButton = (ToggleButton) findViewById(R.id.status_listorgrid);
-//		listOrGridButton.setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-//				if(listOrGridButton.isChecked()){
-//					System.out.println("listOrGridButton is checked!!!");
-//					Intent intent = new Intent();
-//					intent.setAction(PRESS_ACTION);
-//					intent.putExtra("msg", "pressed");
-//					MainActivity.this.sendBroadcast(intent);
-//					userInfo.edit().putString("listOrGrid", "grid").commit(); 
-//				}else{
-//					System.out.println("listOrGridButton is unchecked!!!");
-//					Intent intent = new Intent();
-//					intent.setAction(PRESS_ACTION);
-//					intent.putExtra("msg", "unpressed");
-//					MainActivity.this.sendBroadcast(intent);
-//					userInfo.edit().putString("listOrGrid", "list").commit(); 
-//				}
-//			}
-//		});
 	}
 	
 	
-	/**初始化viewpager
-	
+	/*
+	 * 初始化viewpager
 	 */
 	private void InitViewPager() {
 		mPager = (ViewPager) findViewById(R.id.vPager);
-		// fragmentsList = null;
 		fragmentsList = new ArrayList<Fragment>();
-		// LayoutInflater mInflater = getLayoutInflater();
-		// View activityView = mInflater.inflate(R.layout.c, null);
-		System.out.println("isSdCardAvailable" + FileUtil.isSdCardAvailable());
 		if (FileUtil.isSdCardAvailable()) {
 			activityfragment = new AllFileContentFragment();
 			groupFragment = AllMediaContentFragment
@@ -234,94 +203,61 @@ public class MainActivity extends FragmentActivity {
 			case 0:
 				if (currIndex == 1) {
 					animation = new TranslateAnimation(position_one, 0, 0, 0);
-					// tvTabGroups.setTextColor(resources.getColor(R.color.lightwhite));
 				} else if (currIndex == 2) {
 					animation = new TranslateAnimation(position_two, 0, 0, 0);
-					// tvTabFriends.setTextColor(resources.getColor(R.color.lightwhite));
 				} else if (currIndex == 3) {
 					animation = new TranslateAnimation(position_three, 0, 0, 0);
-					// tvTabChat.setTextColor(resources.getColor(R.color.lightwhite));
 				} else if (currIndex == 4) {
 					animation = new TranslateAnimation(position_four, 0, 0, 0);
 				}
-				// tvTabActivity.setTextColor(resources.getColor(R.color.white));
 				break;
 			case 1:
 				if (currIndex == 0) {
 					animation = new TranslateAnimation(offset, position_one, 0,
 							0);
-					// tvTabActivity.setTextColor(resources.getColor(R.color.lightwhite));
 				} else if (currIndex == 2) {
 					animation = new TranslateAnimation(position_two,
 							position_one, 0, 0);
-					// tvTabFriends.setTextColor(resources.getColor(R.color.lightwhite));
 				} else if (currIndex == 3) {
 					animation = new TranslateAnimation(position_three,
 							position_one, 0, 0);
-					// tvTabChat.setTextColor(resources.getColor(R.color.lightwhite));
 				} else if (currIndex == 4) {
 					animation = new TranslateAnimation(position_four,
 							position_one, 0, 0);
 				}
-				// tvTabGroups.setTextColor(resources.getColor(R.color.white));
 				break;
 			case 2:
 				if (currIndex == 0) {
-					animation = new TranslateAnimation(offset, position_two, 0,
-							0);
-					// tvTabActivity.setTextColor(resources.getColor(R.color.lightwhite));
+					animation = new TranslateAnimation(offset, position_two, 0, 0);
 				} else if (currIndex == 1) {
-					animation = new TranslateAnimation(position_one,
-							position_two, 0, 0);
-					// tvTabGroups.setTextColor(resources.getColor(R.color.lightwhite));
+					animation = new TranslateAnimation(position_one, position_two, 0, 0);
 				} else if (currIndex == 3) {
-					animation = new TranslateAnimation(position_three,
-							position_two, 0, 0);
-					// tvTabChat.setTextColor(resources.getColor(R.color.lightwhite));
+					animation = new TranslateAnimation(position_three, position_two, 0, 0);
 				} else if (currIndex == 4) {
-					animation = new TranslateAnimation(position_four,
-							position_two, 0, 0);
+					animation = new TranslateAnimation(position_four, position_two, 0, 0);
 				}
-
-				// tvTabFriends.setTextColor(resources.getColor(R.color.white));
 				break;
 			case 3:
 				if (currIndex == 0) {
-					animation = new TranslateAnimation(offset, position_three,
-							0, 0);
-					// tvTabActivity.setTextColor(resources.getColor(R.color.lightwhite));
+					animation = new TranslateAnimation(offset, position_three, 0, 0);
 				} else if (currIndex == 1) {
-					animation = new TranslateAnimation(position_one,
-							position_three, 0, 0);
-					// tvTabGroups.setTextColor(resources.getColor(R.color.lightwhite));
+					animation = new TranslateAnimation(position_one, position_three, 0, 0);
 				} else if (currIndex == 2) {
-					animation = new TranslateAnimation(position_two,
-							position_three, 0, 0);
-					// tvTabFriends.setTextColor(resources.getColor(R.color.lightwhite));
+					animation = new TranslateAnimation(position_two, position_three, 0, 0);
 				} else if (currIndex == 4) {
-					animation = new TranslateAnimation(position_four,
-							position_three, 0, 0);
+					animation = new TranslateAnimation(position_four, position_three, 0, 0);
 				}
-				// tvTabChat.setTextColor(resources.getColor(R.color.white));
 				break;
 			case 4:
 				if (currIndex == 0) {
-					animation = new TranslateAnimation(offset, position_four,
-							0, 0);
-					// tvTabActivity.setTextColor(resources.getColor(R.color.lightwhite));
+					animation = new TranslateAnimation(offset, position_four, 0, 0);
 				} else if (currIndex == 1) {
-					animation = new TranslateAnimation(position_one,
-							position_four, 0, 0);
-					// tvTabGroups.setTextColor(resources.getColor(R.color.lightwhite));
+					animation = new TranslateAnimation(position_one, position_four, 0, 0);
 				} else if (currIndex == 2) {
-					animation = new TranslateAnimation(position_two,
-							position_four, 0, 0);
-					// tvTabFriends.setTextColor(resources.getColor(R.color.lightwhite));
+					animation = new TranslateAnimation(position_two, position_four, 0, 0);
 				} else if (currIndex == 3) {
-					animation = new TranslateAnimation(position_three,
-							position_four, 0, 0);
+					animation = new TranslateAnimation(position_three, position_four, 0, 0);
 				}
-				// tvTabChat.setTextColor(resources.getColor(R.color.white));
 				break;
 			}
 			currIndex = arg0;

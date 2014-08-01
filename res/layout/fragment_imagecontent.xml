@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-        <ImageView
+    <ImageView
         android:id="@+id/current_path_pane"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,15 +12,19 @@
         android:gravity="center_vertical"
         android:maxWidth="300dip" />
 
-    
-
-    <ListView
-        android:id="@+id/imagefile_list"
-         android:layout_below="@+id/current_path_pane"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent" />
-    
-
-
+    <GridView
+        android:id="@+id/child_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:cacheColorHint="@android:color/transparent"
+        android:columnWidth="90dip"
+        android:gravity="center"
+        android:horizontalSpacing="5dip"
+        android:listSelector="@android:color/transparent"
+        android:numColumns="4"
+        android:padding="5dip"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="5dip" >
+    </GridView>
 
 </RelativeLayout>

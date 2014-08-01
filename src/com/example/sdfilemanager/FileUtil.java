@@ -5,9 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
@@ -198,6 +200,7 @@ public class FileUtil {
 	        return size/1048576;  
 	    }  
 	
+
 
 	/**  
 	 * TODO 将Srcpathname地址转换成descpathname 

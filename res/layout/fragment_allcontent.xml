@@ -23,8 +23,8 @@
                 style="?android:attr/textAppearanceMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="当前路径:" 
-                android:textSize="12sp"/>
+                android:text="当前路径:"
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/showpathview"
@@ -41,8 +41,8 @@
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/current_path_pane"
-        android:visibility="invisible"
-        android:focusable="true" />
+        android:focusable="true"
+        android:visibility="invisible" />
 
     <GridView
         android:id="@+id/allgrid_list"
@@ -51,9 +51,9 @@
         android:layout_below="@+id/current_path_pane"
         android:horizontalSpacing="10dp"
         android:numColumns="4"
-        android:visibility="invisible"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="10dp" />
+        android:verticalSpacing="10dp"
+        android:visibility="invisible" />
 
     <LinearLayout
         android:id="@+id/moving_operation_bar"
@@ -91,56 +91,48 @@
         android:background="@drawable/secondary_title_background"
         android:visibility="invisible" >
 
-        <RelativeLayout
+        <TextView
+            android:id="@+id/selected_num"
+            style="?android:attr/textAppearanceMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical" >
-            
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:singleLine="true" />
 
-            
-            <TextView
-                android:id="@+id/selected_num"
-                style="?android:attr/textAppearanceMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:gravity="center"
-                android:singleLine="true"  />
+        <Button
+            android:id="@+id/multiselect_button_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_toLeftOf="@+id/multiselect_button_copy"
+            android:background="@drawable/operation_button_delete"
+            android:gravity="center" />
 
-            <ImageView
-                android:id="@+id/multiselect_button_delete"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:layout_toLeftOf="@+id/multiselect_button_copy"
-                android:background="@drawable/operation_button_delete" />
+        <Button
+            android:id="@+id/multiselect_button_copy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/multiselect_button_cut"
+            android:background="@drawable/operation_button_copy"
+            android:gravity="center" />
 
-            <ImageView
-                android:id="@+id/multiselect_button_copy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/multiselect_button_cut"
-                android:background="@drawable/operation_button_copy" />
+        <Button
+            android:id="@+id/multiselect_button_cut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/multiselect_button_cancel"
+            android:background="@drawable/operation_button_move"
+            android:gravity="center" />
 
-            <ImageView
-                android:id="@+id/multiselect_button_cut"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/multiselect_button_cancel"
-                android:background="@drawable/operation_button_move" />
-
-            <ImageView
-                android:id="@+id/multiselect_button_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/operation_button_cancel" />
-
-            
-
-        </RelativeLayout>
+        <Button
+            android:id="@+id/multiselect_button_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/operation_button_cancel"
+            android:gravity="center" />
     </RelativeLayout>
 
 </RelativeLayout>

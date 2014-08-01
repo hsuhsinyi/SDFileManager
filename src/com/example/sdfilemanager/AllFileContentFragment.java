@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -51,16 +52,14 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class AllFileContentFragment extends BaseFragment {
 
-	private TextView showPathView;
-	private ListView listFileView;
-	private GridView gridFileView;
-	private EditText editTextRename;
+
 	List<Map<String, Object>> filelist = null;
 	private static final int ITEM1 = Menu.FIRST;
 	private static final int ITEM2 = Menu.FIRST + 1;
@@ -74,37 +73,52 @@ public class AllFileContentFragment extends BaseFragment {
 	private static final int menuCancelSelect = 5;
 	private static final int menuQuit = 6;
 	private static final int menuShowType = 7;
-	private long mExitTime = 0;
 	public static final int TYPE_ALLFILE = 1;
 	public static final int TYPE_IMAGE = 2;
 	public static final int TYPE_VIDEO = 3;
-	public CheckBox checkboxlistBox;
+	
 	private String currentPath;
 	private AllFileAdapter mSimpleAdapter;
+	
+	private TextView selectedNumView;
 	private View mConfirmOperationBar;
 	private View mSelectOperationBar;
+	private TextView showPathView;
+	private ListView listFileView;
+	private GridView gridFileView;
+	private EditText editTextRename;
+	private Button multiSelectCopyButton;
+	private Button multiSelectCutButton;
+	private Button multiSelectDeleteButton;
+	private Button multiSelectCancelButton; 
+	private Button movingConfirmButton;
+	private Button movingCancelButton;
+	public CheckBox checkboxlistBox;
+	private ProgressDialog myProgressDialog;
+	
+
+	private long mExitTime = 0;
 	private String currentSelectPath;
 	private MyCopyOrCutTask mcopyTask;
 	private String operateCopyOrCut;
 	private String multiSelectPath;
 	// 此参数为是否是多选和正常选择状态
 	boolean selectListMode = false;
-	File currentfile;
-	ProgressDialog myProgressDialog;
+	private File currentfile;
+	
 	ArrayList<String> strMultiPathArray;
-	Button movingConfirmButton;
-	Button movingCancelButton;
+
 	private String currentSrcPath = null;
 	//curentShowType此参数true表示当前是gridview，false表示是listview
 	private static boolean curentShowType = true;
 	public final int  curentShowList = 1;
 	public final int  curentShowGrid = 2;
-	public View currentFileView;
+	
 	public static String listOrGridPressed = "unpressed";
 	public final String PRESS_ACTION = "com.example.broadcast.receiver.listbuttonpressed";
 	public SharedPreferences userInfo;
 	private int selectedNum = 0;
-	private TextView selectedNumView;
+	
 	
 	
 	private BroadcastReceiver MyBroadcastReceiver = new BroadcastReceiver(){
@@ -151,36 +165,62 @@ public class AllFileContentFragment extends BaseFragment {
 		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
 
-		listFileView = (ListView) getActivity().findViewById(R.id.allfile_list);
-		gridFileView = (GridView) getActivity().findViewById(R.id.allgrid_list);
-		showPathView = (TextView) getActivity().findViewById(R.id.showpathview);
-		selectedNumView = (TextView) getActivity().findViewById(R.id.selected_num);
+		initView();
 		
-		movingConfirmButton = (Button) getActivity().findViewById(
-				R.id.button_moving_confirm);
-		movingCancelButton = (Button) getActivity().findViewById(
-				R.id.button_moving_cancel);
-		
-		userInfo = getActivity().getSharedPreferences("user_info", 0);
-		String getInfoString = userInfo.getString("user_info", "");
-		//System.out.println("user_info"+getInfoString);
-		if(getInfoString.equals("grid")){
-			curentShowType = false;
-		}else if(getInfoString.equals("list")){
-			curentShowType = true;
-		}
-		refreshListItem(Environment.getExternalStorageDirectory()
-				+ File.separator);
+//		userInfo = getActivity().getSharedPreferences("user_info", 0);
+//		String getInfoString = userInfo.getString("user_info", "");
+//		//System.out.println("user_info"+getInfoString);
+//		if(getInfoString.equals("grid")){
+//			curentShowType = false;
+//		}else if(getInfoString.equals("list")){
+//			curentShowType = true;
+//		}
+		refreshListItem(Environment.getExternalStorageDirectory() + File.separator);
 		currentPath = Environment.getExternalStorageDirectory() + "";
 		strMultiPathArray = new ArrayList<String>();
 		listFileView.setOnCreateContextMenuListener(this);
 		gridFileView.setOnCreateContextMenuListener(this);
 		
-		
         IntentFilter filter_press = new IntentFilter();  
         filter_press.addAction(PRESS_ACTION);  
         getActivity().registerReceiver(MyBroadcastReceiver, filter_press); 
 		
+	}
+	
+	public void initView(){
+		//初始化listview、gridview以及路径显示pathview
+		listFileView = (ListView) getActivity().findViewById(R.id.allfile_list);
+		gridFileView = (GridView) getActivity().findViewById(R.id.allgrid_list);
+		showPathView = (TextView) getActivity().findViewById(R.id.showpathview);
+		selectedNumView = (TextView) getActivity().findViewById(R.id.selected_num);
+
+		// 初始化单选复制、粘贴按钮
+		mConfirmOperationBar = getActivity().findViewById(
+				R.id.moving_operation_bar);
+		movingConfirmButton = (Button) getActivity().findViewById(
+				R.id.button_moving_confirm);
+		movingCancelButton = (Button) getActivity().findViewById(
+				R.id.button_moving_cancel);
+
+		// 初始化多选以及全选时的操作按钮
+		mSelectOperationBar = getActivity().findViewById(
+				R.id.multiselect_operation_bar);
+	    multiSelectCopyButton = (Button) getActivity()
+				.findViewById(R.id.multiselect_button_copy);
+		multiSelectCutButton = (Button) getActivity()
+				.findViewById(R.id.multiselect_button_cut);
+		multiSelectDeleteButton = (Button) getActivity()
+				.findViewById(R.id.multiselect_button_delete);
+		multiSelectCancelButton = (Button) getActivity()
+				.findViewById(R.id.multiselect_button_cancel);
+		
+		//初始化线程操作时的progressdialog
+		myProgressDialog = new ProgressDialog(getActivity());
+		myProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		myProgressDialog.setTitle("文件操作");
+		myProgressDialog.setMessage("正在处理中....");
+		myProgressDialog.setIndeterminate(false);
+		myProgressDialog.setCancelable(false);
 	}
 
 	public void setCurrentFileView(){
@@ -188,12 +228,10 @@ public class AllFileContentFragment extends BaseFragment {
 			listFileView.setVisibility(View.VISIBLE);
 			gridFileView.setVisibility(View.GONE);
 			mSimpleAdapter.setShowType(curentShowList);
-			currentFileView = listFileView;
 		}else{
 			gridFileView.setVisibility(View.VISIBLE);
 			listFileView.setVisibility(View.GONE);
 			mSimpleAdapter.setShowType(curentShowGrid);
-			currentFileView = gridFileView;
 		}
 	}
 	
@@ -218,7 +256,6 @@ public class AllFileContentFragment extends BaseFragment {
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
 			// TODO Auto-generated method stub
-	//		System.out.println("current selectmode is:" + selectListMode);
 			if (selectListMode) {
 				if (mSimpleAdapter.isSelected.get(position)) {
 					mSimpleAdapter.isSelected.put(position, false);
@@ -237,48 +274,7 @@ public class AllFileContentFragment extends BaseFragment {
 				if (file.isDirectory()) {
 					refreshListItem(currentPath);
 				} else if (file.isFile()) {
-					if (JudgeMediaFileType.isImageFileType(file)) {
-						Intent intent = new Intent("android.intent.action.VIEW");
-						intent.addCategory("android.intent.category.DEFAULT");
-						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						Uri uri = Uri.fromFile(file);
-						intent.setDataAndType(uri, "image/*");
-						startActivity(intent);
-					} else if (JudgeMediaFileType.isAudioFileType(file)) {
-						Intent intent = new Intent("android.intent.action.VIEW");
-						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-						intent.putExtra("oneshot", 0);
-						intent.putExtra("configchange", 0);
-						Uri uri = Uri.fromFile(file);
-						intent.setDataAndType(uri, "audio/*");
-						startActivity(intent);
-					} else if (JudgeMediaFileType.isVideoFileType(file)) {
-						Intent intent = new Intent("android.intent.action.VIEW");
-						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-						intent.putExtra("oneshot", 0);
-						intent.putExtra("configchange", 0);
-						Uri uri = Uri.fromFile(file);
-						intent.setDataAndType(uri, "video/*");
-						startActivity(intent);
-					} else if (JudgeMediaFileType.isTxtFileType(file)) {
-						Intent intent = new Intent("android.intent.action.VIEW");
-						intent.addCategory("android.intent.category.DEFAULT");
-						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						Uri uri = Uri.fromFile(file);
-						intent.setDataAndType(uri, "text/plain");
-					} else if (JudgeMediaFileType.isApkFileType(file)) {
-						Intent intent = new Intent();
-						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						intent.setAction(android.content.Intent.ACTION_VIEW);
-						intent.setDataAndType(Uri.fromFile(file),
-								"application/vnd.android.package-archive");
-						startActivity(intent);
-//						Intent intent = new Intent("android.intent.action.VIEW");
-//						intent.addCategory("android.intent.category.DEFAULT");
-//						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//						Uri uri = Uri.fromFile(file);
-//						intent.setDataAndType(uri, "text/plain");
-					}
+					startOnFileTypes(file);
 					currentPath = file.getParentFile().getAbsolutePath();
 				}
 			}
@@ -428,11 +424,13 @@ public class AllFileContentFragment extends BaseFragment {
 		// 复制选项
 		case ITEM3:
 			operateCopyOrCut = "copy";
+			selectListMode = false;
 			copyContextMenuOperate();
 			break;
 		// 剪切选项
 		case ITEM4:
 			operateCopyOrCut = "cut";
+			selectListMode = false;
 			copyContextMenuOperate();
 			break;
 		case ITEM5:
@@ -454,20 +452,14 @@ public class AllFileContentFragment extends BaseFragment {
 				R.id.moving_operation_bar);
 		mConfirmOperationBar.setVisibility(View.VISIBLE);
 		unregisterForContextMenu(listFileView);
-		movingCancelButton.setOnClickListener(listener);
-		movingConfirmButton.setOnClickListener(listener);
+		movingCancelButton.setOnClickListener(selectListener);
+		movingConfirmButton.setOnClickListener(selectListener);
 		strMultiPathArray.add(currentSelectPath);
 	}
 
 	private class MyCopyOrCutTask extends AsyncTask<String, Integer, String> {
 
 		public MyCopyOrCutTask() {
-			myProgressDialog = new ProgressDialog(getActivity());
-			myProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			myProgressDialog.setTitle("文件操作");
-			myProgressDialog.setMessage("正在处理中....");
-			myProgressDialog.setIndeterminate(false);
-			myProgressDialog.setCancelable(false);
 			myProgressDialog.show();
 		}
 
@@ -475,22 +467,18 @@ public class AllFileContentFragment extends BaseFragment {
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			if (operateCopyOrCut.equals("copy")) {
-
 				for (int i = 0; i < strMultiPathArray.size(); i++) {
 					String descPathName = FileUtil.parseSrcPathToDesc(
 							strMultiPathArray.get(i), params[0]);
 					FileUtil.copyFileOrDirectory(strMultiPathArray.get(i),
 							descPathName);
-
 				}
 			} else if (operateCopyOrCut.equals("cut")) {
-
 				for (int i = 0; i < strMultiPathArray.size(); i++) {
 					String descPathName = FileUtil.parseSrcPathToDesc(
 							strMultiPathArray.get(i), params[0]);
 					FileUtil.cut(strMultiPathArray.get(i), descPathName);
 				}
-
 			}
 			return null;
 		}
@@ -574,6 +562,7 @@ public class AllFileContentFragment extends BaseFragment {
 			return renameDialog;
 
 		case 3:
+			//创建新建文件夹dialog
 			View dialogNewFoldView = LayoutInflater.from(getActivity())
 					.inflate(R.layout.dialog_fileoption, null);
 			editTextRename = (EditText) dialogNewFoldView
@@ -611,6 +600,7 @@ public class AllFileContentFragment extends BaseFragment {
 			return newFileFoldDialog;
 
 		case 4:
+			//创建文件详细信息dialog
 			View dialogFileDetailView = LayoutInflater.from(getActivity())
 					.inflate(R.layout.dialog_filedetail, null);
 			File currentFile = new File(currentSelectPath);
@@ -702,12 +692,8 @@ public class AllFileContentFragment extends BaseFragment {
 	 * android.support.v4.app.Fragment#onOptionsItemSelected(android.view.MenuItem
 	 * )
 	 */
-	@SuppressLint("NewApi")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == 1) {
 			Dialog newFoldDialog = onCreatDialog(3);
@@ -715,8 +701,6 @@ public class AllFileContentFragment extends BaseFragment {
 		} else if (id == 2) {
 			for (int i = 0; i < filelist.size(); i++) {
 				mSimpleAdapter.isSelected.put(i, true);
-//				listFileView.setAdapter(mSimpleAdapter);
-//				gridFileView.setAdapter(mSimpleAdapter);
 				mSimpleAdapter.notifyDataSetChanged();
 			}
 			selectedNum = filelist.size();
@@ -737,6 +721,7 @@ public class AllFileContentFragment extends BaseFragment {
 			}
 			selectListMode = false;
 			mSelectOperationBar.setVisibility(View.GONE);
+			mConfirmOperationBar.setVisibility(View.GONE);
 		} else if (id == 6) {
 			getActivity().finish();
 		} else if (id == 7) {
@@ -745,7 +730,6 @@ public class AllFileContentFragment extends BaseFragment {
 			builder.setTitle("选择查看方式");
 			builder.setItems(items, new DialogInterface.OnClickListener() {
 			    public void onClick(DialogInterface dialog, int item) {
-			        //Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
 			    	if(item == 0){
 						curentShowType = true;
 						refreshListItem(currentPath);
@@ -762,84 +746,42 @@ public class AllFileContentFragment extends BaseFragment {
 		return super.onOptionsItemSelected(item);
 	}
 
+	/**
+	 * 多选或者全选时 的操作
+	 */
 	private void multiSelectOption() {
-		// TODO Auto-generated method stub
-
-		mSelectOperationBar = getActivity().findViewById(
-				R.id.multiselect_operation_bar);
-		mConfirmOperationBar = getActivity().findViewById(
-				R.id.moving_operation_bar);
 		mSelectOperationBar.setVisibility(View.VISIBLE);
-		movingConfirmButton = (Button) getActivity().findViewById(
-				R.id.button_moving_confirm);
-		movingCancelButton = (Button) getActivity().findViewById(
-				R.id.button_moving_cancel);
-		ImageView multiSelectCopyButton = (ImageView) getActivity().findViewById(
-				R.id.multiselect_button_copy);
-		ImageView multiSelectCutButton = (ImageView) getActivity().findViewById(
-				R.id.multiselect_button_cut);
-		ImageView multiSelectDeleteButton = (ImageView) getActivity().findViewById(
-				R.id.multiselect_button_delete);
-		ImageView multiSelectCancelButton = (ImageView) getActivity().findViewById(
-				R.id.multiselect_button_cancel);
-
-		multiSelectCancelButton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				mSelectOperationBar.setVisibility(View.GONE);
-				for (int i = 0; i < filelist.size(); i++) {
-					mSimpleAdapter.isSelected.put(i, false);
-					mSimpleAdapter.notifyDataSetChanged();
-				}
-				selectListMode = false;
-			}
-		});
-		multiSelectCopyButton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				currentSrcPath = currentPath;
-				// TODO Auto-generated method stub
-				boolean isSelectFile = false;
-				for (int i = 0; i < filelist.size(); i++) {
-					isSelectFile = mSimpleAdapter.isSelected.get(i);
-					if (isSelectFile) {
-						break;
-					}
-				}
-				if (!isSelectFile) {
-					Toast.makeText(getActivity(), "请选择至少一个文件",
-							Toast.LENGTH_SHORT).show();
-				} else {
-					for (int i = 0; i < filelist.size(); i++) {
-						isSelectFile = mSimpleAdapter.isSelected.get(i);
-						if (isSelectFile) {
-							multiSelectPath = (String) filelist.get(i).get(
-									"path");
-							strMultiPathArray.add(multiSelectPath);
-							System.out.println("multiSelectPath:::"
-									+ multiSelectPath);
-						}
-					}
-					mSelectOperationBar.setVisibility(View.GONE);
-					selectListMode = false;
-					for (int i = 0; i < filelist.size(); i++) {
-						mSimpleAdapter.isSelected.put(i, false);
-						mSimpleAdapter.notifyDataSetChanged();
-					}
-					mConfirmOperationBar.setVisibility(View.VISIBLE);
-					movingConfirmButton.setOnClickListener(listener);
-					movingCancelButton.setOnClickListener(listener);
-					operateCopyOrCut = "copy";
-				}
-			}
-		});
-
+		multiSelectCopyButton.setOnClickListener(multiSelectListener);
+		multiSelectCancelButton.setOnClickListener(multiSelectListener);
 	}
+	
+    OnClickListener multiSelectListener = new OnClickListener() {//创建多选或者全选时的剪切、复制..按钮的监听对象
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			switch (v.getId()) {
+			case R.id.multiselect_button_copy:
+				operateCopyOrCut = "copy";
+				multiCopyOrCutClick();
+				break;
+			case R.id.multiselect_button_cut:
+				operateCopyOrCut = "cut";
+				multiCopyOrCutClick();
+				break;
+			case R.id.multiselect_button_cancel:
+				multiCancelClick();
+				break;
+			case R.id.multiselect_button_delete:
+				
+				break;
+				
+			default:
+				break;
+			}
+		}
+	};
 
-	Button.OnClickListener listener = new Button.OnClickListener() {// 创建监听对象
+	OnClickListener selectListener = new OnClickListener() {// 创建粘贴、取消按钮的监听对象
 		public void onClick(View v) {
 			switch (v.getId()) {
 			case R.id.button_moving_confirm:
@@ -848,7 +790,11 @@ public class AllFileContentFragment extends BaseFragment {
 							Toast.LENGTH_SHORT).show();
 					return;
 				}
-
+				if(currentfile.isFile()){
+					Toast.makeText(getActivity(), "请选择目录！",
+							Toast.LENGTH_SHORT).show();
+					return;
+				}
 				mConfirmOperationBar.setVisibility(View.GONE);
 				mcopyTask = new MyCopyOrCutTask();
 				mcopyTask.execute(currentPath);
@@ -864,7 +810,99 @@ public class AllFileContentFragment extends BaseFragment {
 			}
 		}
 	};
+	
+	/**
+	 * 多选或者全选时的"复制"、"剪切"按钮处理流程
+	 */
+	public void multiCopyOrCutClick(){
+		currentSrcPath = currentPath;
+		// TODO Auto-generated method stub
+		boolean isSelectFile = false;
+		for (int i = 0; i < filelist.size(); i++) {
+			isSelectFile = mSimpleAdapter.isSelected.get(i);
+			if (isSelectFile) {
+				break;
+			}
+		}
+		if (!isSelectFile) {
+			Toast.makeText(getActivity(), "请选择至少一个文件",
+					Toast.LENGTH_SHORT).show();
+		} else {
+			for (int i = 0; i < filelist.size(); i++) {
+				isSelectFile = mSimpleAdapter.isSelected.get(i);
+				if (isSelectFile) {
+					multiSelectPath = (String) filelist.get(i).get(
+							"path");
+					strMultiPathArray.add(multiSelectPath);
+					System.out.println("multiSelectPath:::"+ multiSelectPath);
+				}
+			}
+			mSelectOperationBar.setVisibility(View.GONE);
+			selectListMode = false;
+			for (int i = 0; i < filelist.size(); i++) {
+				mSimpleAdapter.isSelected.put(i, false);
+				mSimpleAdapter.notifyDataSetChanged();
+			}
+			mConfirmOperationBar.setVisibility(View.VISIBLE);
+			movingConfirmButton.setOnClickListener(selectListener);
+			movingCancelButton.setOnClickListener(selectListener);
+		}
+	}
+	
+	/**
+	 * 多选或者全选时的“取消”按钮处理流程
+	 */
+	public void multiCancelClick(){
+		mSelectOperationBar.setVisibility(View.GONE);
+		for (int i = 0; i < filelist.size(); i++) {
+			mSimpleAdapter.isSelected.put(i, false);
+			mSimpleAdapter.notifyDataSetChanged();
+		}
+		selectListMode = false;
+	}
 
+	public void startOnFileTypes(File file){
+		if (JudgeMediaFileType.isImageFileType(file)) {
+			Intent intent = new Intent("android.intent.action.VIEW");
+			intent.addCategory("android.intent.category.DEFAULT");
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			Uri uri = Uri.fromFile(file);
+			intent.setDataAndType(uri, "image/*");
+			startActivity(intent);
+		} else if (JudgeMediaFileType.isAudioFileType(file)) {
+			Intent intent = new Intent("android.intent.action.VIEW");
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.putExtra("oneshot", 0);
+			intent.putExtra("configchange", 0);
+			Uri uri = Uri.fromFile(file);
+			intent.setDataAndType(uri, "audio/*");
+			startActivity(intent);
+		} else if (JudgeMediaFileType.isVideoFileType(file)) {
+			Intent intent = new Intent("android.intent.action.VIEW");
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.putExtra("oneshot", 0);
+			intent.putExtra("configchange", 0);
+			Uri uri = Uri.fromFile(file);
+			intent.setDataAndType(uri, "video/*");
+			startActivity(intent);
+		} else if (JudgeMediaFileType.isTxtFileType(file)) {
+			Intent intent = new Intent("android.intent.action.VIEW");
+			intent.addCategory("android.intent.category.DEFAULT");
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			Uri uri = Uri.fromFile(file);
+			intent.setDataAndType(uri, "text/plain");
+		} else if (JudgeMediaFileType.isApkFileType(file)) {
+			Intent intent = new Intent();
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.setAction(android.content.Intent.ACTION_VIEW);
+			intent.setDataAndType(Uri.fromFile(file),"application/vnd.android.package-archive");
+			startActivity(intent);
+		}
+	}
+	
+	/* (non-Javadoc)在fragment中重写onKeyUp事件
+	 * @see com.example.sdfilemanager.BaseFragment#onKeyUp(int, android.view.KeyEvent)
+	 */
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			String currPath = currentPath + File.separator;
@@ -900,7 +938,5 @@ public class AllFileContentFragment extends BaseFragment {
 	@Override
 	public void loadListData() {
 		// TODO Auto-generated method stub
-
 	}
-
 }
