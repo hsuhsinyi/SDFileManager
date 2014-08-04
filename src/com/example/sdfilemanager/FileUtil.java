@@ -221,6 +221,8 @@ public class FileUtil {
 				- 1);
 	} 
 	
+	
+	
 	 /**
 	  * 获取视频的缩略图
 	  * 先通过ThumbnailUtils来创建一个视频的缩略图，然后再利用ThumbnailUtils来生成指定大小的缩略图。

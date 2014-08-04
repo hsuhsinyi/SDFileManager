@@ -22,7 +22,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -49,6 +54,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -87,10 +93,10 @@ public class AllFileContentFragment extends BaseFragment {
 	private ListView listFileView;
 	private GridView gridFileView;
 	private EditText editTextRename;
-	private Button multiSelectCopyButton;
-	private Button multiSelectCutButton;
-	private Button multiSelectDeleteButton;
-	private Button multiSelectCancelButton; 
+	private ImageButton multiSelectCopyButton;
+	private ImageButton multiSelectCutButton;
+	private ImageButton multiSelectDeleteButton;
+	private ImageButton multiSelectCancelButton; 
 	private Button movingConfirmButton;
 	private Button movingCancelButton;
 	public CheckBox checkboxlistBox;
@@ -205,14 +211,19 @@ public class AllFileContentFragment extends BaseFragment {
 		// 初始化多选以及全选时的操作按钮
 		mSelectOperationBar = getActivity().findViewById(
 				R.id.multiselect_operation_bar);
-	    multiSelectCopyButton = (Button) getActivity()
+	    multiSelectCopyButton = (ImageButton) getActivity()
 				.findViewById(R.id.multiselect_button_copy);
-		multiSelectCutButton = (Button) getActivity()
+		multiSelectCutButton = (ImageButton) getActivity()
 				.findViewById(R.id.multiselect_button_cut);
-		multiSelectDeleteButton = (Button) getActivity()
+		multiSelectDeleteButton = (ImageButton) getActivity()
 				.findViewById(R.id.multiselect_button_delete);
-		multiSelectCancelButton = (Button) getActivity()
+		multiSelectCancelButton = (ImageButton) getActivity()
 				.findViewById(R.id.multiselect_button_cancel);
+//		multiSelectDeleteButton.setPadding((int) (getScreenWidth()/5.0),  multiSelectDeleteButton.getPaddingTop(),  
+//				multiSelectDeleteButton.getPaddingRight(),  multiSelectDeleteButton.getPaddingBottom());
+//		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)ImageView.getLayoutParams();
+//		params.setMargins(left, top, right, bottom));// 通过自定义坐标来放置你的控件
+//		mTextView .setLayoutParams(params);
 		
 		//初始化线程操作时的progressdialog
 		myProgressDialog = new ProgressDialog(getActivity());
@@ -291,7 +302,7 @@ public class AllFileContentFragment extends BaseFragment {
 				continue;
 			} else if (file.isDirectory()) {
 				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("image", R.drawable.ic_dir);
+				map.put("image",  getActivity().getResources().getDrawable(R.drawable.ic_dir));
 				map.put("name", file.getName());
 				time = file.lastModified();
 				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -302,7 +313,7 @@ public class AllFileContentFragment extends BaseFragment {
 			} else if (file.isFile()) {
 				if (JudgeMediaFileType.isImageFileType(file)) {
 					Map<String, Object> map = new HashMap<String, Object>();
-					map.put("image", R.drawable.file_icon_picture);
+					map.put("image", getActivity().getResources().getDrawable(R.drawable.file_icon_picture));
 					map.put("name", file.getName());
 					time = file.lastModified();
 					SimpleDateFormat formatter = new SimpleDateFormat(
@@ -313,7 +324,7 @@ public class AllFileContentFragment extends BaseFragment {
 					list.add(map);
 				} else if (JudgeMediaFileType.isVideoFileType(file)) {
 					Map<String, Object> map = new HashMap<String, Object>();
-					map.put("image", R.drawable.file_icon_video);
+					map.put("image",getActivity().getResources().getDrawable(R.drawable.file_icon_video));
 					map.put("name", file.getName());
 					time = file.lastModified();
 					SimpleDateFormat formatter = new SimpleDateFormat(
@@ -324,7 +335,7 @@ public class AllFileContentFragment extends BaseFragment {
 					list.add(map);
 				} else if (JudgeMediaFileType.isAudioFileType(file)) {
 					Map<String, Object> map = new HashMap<String, Object>();
-					map.put("image", R.drawable.file_icon_mp3);
+					map.put("image", getActivity().getResources().getDrawable(R.drawable.file_icon_mp3));
 					map.put("name", file.getName());
 					time = file.lastModified();
 					SimpleDateFormat formatter = new SimpleDateFormat(
@@ -335,7 +346,7 @@ public class AllFileContentFragment extends BaseFragment {
 					list.add(map);
 				} else if (JudgeMediaFileType.isTxtFileType(file)) {
 					Map<String, Object> map = new HashMap<String, Object>();
-					map.put("image", R.drawable.file_icon_txt);
+					map.put("image", getActivity().getResources().getDrawable(R.drawable.file_icon_txt));
 					map.put("name", file.getName());
 					time = file.lastModified();
 					SimpleDateFormat formatter = new SimpleDateFormat(
@@ -346,7 +357,12 @@ public class AllFileContentFragment extends BaseFragment {
 					list.add(map);
 				} else if (JudgeMediaFileType.isApkFileType(file)) {
 					Map<String, Object> map = new HashMap<String, Object>();
-					map.put("image", R.drawable.file_icon_apk);
+					try {
+						map.put("image", getApkIcon(file.getAbsolutePath()));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					map.put("name", file.getName());
 					time = file.lastModified();
 					SimpleDateFormat formatter = new SimpleDateFormat(
@@ -834,7 +850,7 @@ public class AllFileContentFragment extends BaseFragment {
 					multiSelectPath = (String) filelist.get(i).get(
 							"path");
 					strMultiPathArray.add(multiSelectPath);
-					System.out.println("multiSelectPath:::"+ multiSelectPath);
+					//System.out.println("multiSelectPath:::"+ multiSelectPath);
 				}
 			}
 			mSelectOperationBar.setVisibility(View.GONE);
@@ -898,6 +914,39 @@ public class AllFileContentFragment extends BaseFragment {
 			intent.setDataAndType(Uri.fromFile(file),"application/vnd.android.package-archive");
 			startActivity(intent);
 		}
+	}
+	
+	public Drawable getApkIcon(String path) throws Exception {
+		Drawable icon2;
+		Drawable icon1;
+		PackageManager pm = getActivity().getPackageManager();
+		PackageInfo pkgInfo = pm.getPackageArchiveInfo(path,
+				PackageManager.GET_ACTIVITIES);
+		//if (pkgInfo != null) {
+			ApplicationInfo appInfo = pkgInfo.applicationInfo;
+			/* 必须加这两句，不然下面icon获取是default icon而不是应用包的icon */
+			appInfo.sourceDir = path;
+			appInfo.publicSourceDir = path;
+			String appName = pm.getApplicationLabel(appInfo).toString();// 得到应用名
+			String packageName = appInfo.packageName; // 得到包名
+			String version = pkgInfo.versionName; // 得到版本信息
+			/* icon1和icon2其实是一样的 */
+			icon1 = pm.getApplicationIcon(appInfo);// 得到图标信息
+			icon2 = appInfo.loadIcon(pm);
+			String pkgInfoStr = String.format(
+					"PackageName:%s, Vesion: %s, AppName: %s", packageName,
+					version, appName);
+			//return icon1;
+		//}
+		return icon1;
+
+	}
+	
+	public int getScreenWidth() {
+		DisplayMetrics dm = new DisplayMetrics();
+		getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+		int screenWidth = dm.widthPixels;
+		return screenWidth;
 	}
 	
 	/* (non-Javadoc)在fragment中重写onKeyUp事件

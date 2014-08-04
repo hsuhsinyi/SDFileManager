@@ -116,14 +116,14 @@ public class MainActivity extends FragmentActivity {
 		TabSDFile = (TextView) findViewById(R.id.category_sd_file);
 		TabPicFile = (TextView) findViewById(R.id.category_pic_file);
 		TabVideoFile = (TextView) findViewById(R.id.category_video_file);
-		TabMusicFile = (TextView) findViewById(R.id.category_music_file);
-		TabZipFile = (TextView) findViewById(R.id.category_apk_file);
+//		TabMusicFile = (TextView) findViewById(R.id.category_music_file);
+//		TabZipFile = (TextView) findViewById(R.id.category_apk_file);
 
 		TabSDFile.setOnClickListener(new MyOnClickListener(0));
 		TabPicFile.setOnClickListener(new MyOnClickListener(1));
 		TabVideoFile.setOnClickListener(new MyOnClickListener(2));
-		TabMusicFile.setOnClickListener(new MyOnClickListener(3));
-		TabZipFile.setOnClickListener(new MyOnClickListener(4));
+//		TabMusicFile.setOnClickListener(new MyOnClickListener(3));
+//		TabZipFile.setOnClickListener(new MyOnClickListener(4));
 	}
 	
 	
@@ -135,19 +135,19 @@ public class MainActivity extends FragmentActivity {
 		fragmentsList = new ArrayList<Fragment>();
 		if (FileUtil.isSdCardAvailable()) {
 			activityfragment = new AllFileContentFragment();
-			groupFragment = AllMediaContentFragment
-					.newInstance(AllMediaContentFragment.TYPE_IMAGE);
-			friendsFragment = AllMediaContentFragment
-					.newInstance(AllMediaContentFragment.TYPE_VIDEO);
-			chatFragment = AllMediaContentFragment
-					.newInstance(AllMediaContentFragment.TYPE_AUDIO);
-			peopleFragment = AllMediaContentFragment
-					.newInstance(AllMediaContentFragment.TYPE_APK);
+			groupFragment = ImageContentFragment
+					.newInstance(ImageContentFragment.TYPE_IMAGE);
+			friendsFragment = ImageContentFragment
+					.newInstance(ImageContentFragment.TYPE_VIDEO);
+//			chatFragment = AllMediaContentFragment
+//					.newInstance(AllMediaContentFragment.TYPE_AUDIO);
+//			peopleFragment = AllMediaContentFragment
+//					.newInstance(AllMediaContentFragment.TYPE_APK);
 			fragmentsList.add(activityfragment);
 			fragmentsList.add(groupFragment);
 			fragmentsList.add(friendsFragment);
-			fragmentsList.add(chatFragment);
-			fragmentsList.add(peopleFragment);
+//			fragmentsList.add(chatFragment);
+//			fragmentsList.add(peopleFragment);
 		} else {
 			activityfragment = new StorageNotReadyFragment();
 			fragmentsList.add(activityfragment);
@@ -168,17 +168,17 @@ public class MainActivity extends FragmentActivity {
 		ivBottomLine = (ImageView) findViewById(R.id.iv_bottom_line);
 		bottomLineWidth = ivBottomLine.getLayoutParams().width;
 		screenW = getScreenWidth();
-		int eachWith = (int) (screenW / 5.0);
+		int eachWith = (int) (screenW / 3.0);
 		ivBottomLine
 				.setLayoutParams(new LinearLayout.LayoutParams(eachWith, 5));
 		// offset = (int) (screenW /10.0) - (int) (bottomLineWidth/2);
 		// ivBottomLine.setX((float)offset);
-		offset = (int) ((screenW / 5.0) / 2);
+		offset = (int) ((screenW / 3.0) / 2);
 
-		position_one = (int) (screenW / 5.0);
-		position_two = (int) (screenW / 5.0) * 2;
-		position_three = (int) (screenW / 5.0) * 3;
-		position_four = (int) (screenW / 5.0) * 4;
+		position_one = (int) (screenW / 3.0);
+		position_two = (int) (screenW / 3.0) * 2;
+		position_three = (int) (screenW / 3.0) * 3;
+		position_four = (int) (screenW / 3.0) * 4;
 	}
 
 	public class MyOnClickListener implements View.OnClickListener {
@@ -205,10 +205,10 @@ public class MainActivity extends FragmentActivity {
 					animation = new TranslateAnimation(position_one, 0, 0, 0);
 				} else if (currIndex == 2) {
 					animation = new TranslateAnimation(position_two, 0, 0, 0);
-				} else if (currIndex == 3) {
-					animation = new TranslateAnimation(position_three, 0, 0, 0);
-				} else if (currIndex == 4) {
-					animation = new TranslateAnimation(position_four, 0, 0, 0);
+//				} else if (currIndex == 3) {
+//					animation = new TranslateAnimation(position_three, 0, 0, 0);
+//				} else if (currIndex == 4) {
+//					animation = new TranslateAnimation(position_four, 0, 0, 0);
 				}
 				break;
 			case 1:
@@ -218,12 +218,12 @@ public class MainActivity extends FragmentActivity {
 				} else if (currIndex == 2) {
 					animation = new TranslateAnimation(position_two,
 							position_one, 0, 0);
-				} else if (currIndex == 3) {
-					animation = new TranslateAnimation(position_three,
-							position_one, 0, 0);
-				} else if (currIndex == 4) {
-					animation = new TranslateAnimation(position_four,
-							position_one, 0, 0);
+//				} else if (currIndex == 3) {
+//					animation = new TranslateAnimation(position_three,
+//							position_one, 0, 0);
+//				} else if (currIndex == 4) {
+//					animation = new TranslateAnimation(position_four,
+//							position_one, 0, 0);
 				}
 				break;
 			case 2:
@@ -231,34 +231,34 @@ public class MainActivity extends FragmentActivity {
 					animation = new TranslateAnimation(offset, position_two, 0, 0);
 				} else if (currIndex == 1) {
 					animation = new TranslateAnimation(position_one, position_two, 0, 0);
-				} else if (currIndex == 3) {
-					animation = new TranslateAnimation(position_three, position_two, 0, 0);
-				} else if (currIndex == 4) {
-					animation = new TranslateAnimation(position_four, position_two, 0, 0);
+//				} else if (currIndex == 3) {
+//					animation = new TranslateAnimation(position_three, position_two, 0, 0);
+//				} else if (currIndex == 4) {
+//					animation = new TranslateAnimation(position_four, position_two, 0, 0);
 				}
 				break;
-			case 3:
-				if (currIndex == 0) {
-					animation = new TranslateAnimation(offset, position_three, 0, 0);
-				} else if (currIndex == 1) {
-					animation = new TranslateAnimation(position_one, position_three, 0, 0);
-				} else if (currIndex == 2) {
-					animation = new TranslateAnimation(position_two, position_three, 0, 0);
-				} else if (currIndex == 4) {
-					animation = new TranslateAnimation(position_four, position_three, 0, 0);
-				}
-				break;
-			case 4:
-				if (currIndex == 0) {
-					animation = new TranslateAnimation(offset, position_four, 0, 0);
-				} else if (currIndex == 1) {
-					animation = new TranslateAnimation(position_one, position_four, 0, 0);
-				} else if (currIndex == 2) {
-					animation = new TranslateAnimation(position_two, position_four, 0, 0);
-				} else if (currIndex == 3) {
-					animation = new TranslateAnimation(position_three, position_four, 0, 0);
-				}
-				break;
+//			case 3:
+//				if (currIndex == 0) {
+//					animation = new TranslateAnimation(offset, position_three, 0, 0);
+//				} else if (currIndex == 1) {
+//					animation = new TranslateAnimation(position_one, position_three, 0, 0);
+//				} else if (currIndex == 2) {
+//					animation = new TranslateAnimation(position_two, position_three, 0, 0);
+//				} else if (currIndex == 4) {
+//					animation = new TranslateAnimation(position_four, position_three, 0, 0);
+//				}
+//				break;
+//			case 4:
+//				if (currIndex == 0) {
+//					animation = new TranslateAnimation(offset, position_four, 0, 0);
+//				} else if (currIndex == 1) {
+//					animation = new TranslateAnimation(position_one, position_four, 0, 0);
+//				} else if (currIndex == 2) {
+//					animation = new TranslateAnimation(position_two, position_four, 0, 0);
+//				} else if (currIndex == 3) {
+//					animation = new TranslateAnimation(position_three, position_four, 0, 0);
+//				}
+//				break;
 			}
 			currIndex = arg0;
 			((BaseFragment) adapter.getItem(arg0)).loadListData();
@@ -280,14 +280,14 @@ public class MainActivity extends FragmentActivity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		// TODO Auto-generated method stub
 		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			System.out.println("now is landscape");
+			//System.out.println("now is landscape");
 			// screenW = getScreenWidth();
 			InitWidth();
 			InitTextView();
 			InitViewPager();
 		}
 		if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-			System.out.println("now is portrait");
+			//System.out.println("now is portrait");
 			// screenW = getScreenWidth();
 			InitWidth();
 			InitTextView();

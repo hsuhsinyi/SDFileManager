@@ -10,6 +10,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -84,7 +85,7 @@ public class AllFileAdapter extends SimpleAdapter {
 				break;
 				
 			case SHOW_GRID:
-				convertView = mLayoutInflater.inflate(R.layout.gridrow_allfile, null);
+				convertView = mLayoutInflater.inflate(R.layout.grid_allfile, null);
 				System.out.println("show_grid");
 				break;
 
@@ -97,8 +98,8 @@ public class AllFileAdapter extends SimpleAdapter {
 					.findViewById(R.id.imageDir);
 			holder.listFileName = (TextView) convertView
 					.findViewById(R.id.name);
-			holder.listMdTime = (TextView) convertView
-					.findViewById(R.id.mdtime);
+			//holder.listMdTime = (TextView) convertView
+			//		.findViewById(R.id.mdtime);
 			holder.listcheckbox = (CheckBox) convertView
 					.findViewById(R.id.listcheckbox);
 
@@ -106,11 +107,11 @@ public class AllFileAdapter extends SimpleAdapter {
 			holder = (ViewHolder) convertView.getTag();
 		}
 		convertView.setTag(holder);
-		holder.listImageView.setBackgroundResource((Integer) mlist
+		holder.listImageView.setImageDrawable((Drawable) mlist
 				.get(position).get("image"));
 		holder.listFileName.setText(mlist.get(position).get("name").toString());
-		holder.listMdTime.setText(mlist.get(position).get("modifytime")
-				.toString());
+		//holder.listMdTime.setText(mlist.get(position).get("modifytime")
+		//		.toString());
 		holder.listcheckbox.setChecked(isSelected.get(position));
 		final CheckBox checkBox = holder.listcheckbox;
 		final int arg2 = position;

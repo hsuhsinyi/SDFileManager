@@ -1,42 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="fill_parent"
+    android:orientation="horizontal"
     android:padding="5dip" >
 	<ImageView 
 	    android:id="@+id/imageDir"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"/>
+	    android:layout_width="45dip"
+	    android:layout_height="45dip"
+	    android:scaleType="centerInside"/>
 	
-	<LinearLayout 
-	    android:orientation="vertical"
-	    android:layout_toRightOf="@+id/imageDir"
-	    android:layout_width="wrap_content"
+	<RelativeLayout
+	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    >
+	    android:padding="5dip"
+	    android:layout_toRightOf="@+id/imageDir"
+	    android:orientation="vertical" >
+
 	    <TextView
        		android:id="@+id/name"
         	android:textSize="16sp"
-        	android:textStyle="bold"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content" />
 
    		<TextView
         	android:id="@+id/mdtime"
+        	android:layout_below="@+id/name"
         	android:textSize="12sp"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content" />
-	</LinearLayout>
-	<CheckBox 
-	    android:id="@+id/listcheckbox"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentRight="true"
-       android:focusable="false"   
-        android:focusableInTouchMode="false"   
-        android:clickable="false"   
-        android:enabled="false"
-	    android:layout_marginRight="20dp"/>
+
+   		<CheckBox
+   		    android:id="@+id/listcheckbox"
+   		    android:layout_width="wrap_content"
+   		    android:layout_height="wrap_content"
+   		    android:layout_alignBottom="@+id/mdtime"
+   		    android:layout_alignParentRight="true"
+   		    android:button="@drawable/pictures_select_icon"
+   		    android:clickable="false"
+   		    android:enabled="false"
+   		    android:focusable="false"
+   		    android:focusableInTouchMode="false" />
+
+	</RelativeLayout>
 
 
-</RelativeLayout>
+
+</LinearLayout>
