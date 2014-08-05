@@ -17,6 +17,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,11 +28,15 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -82,6 +87,7 @@ public class AllFileContentFragment extends BaseFragment {
 	public static final int TYPE_ALLFILE = 1;
 	public static final int TYPE_IMAGE = 2;
 	public static final int TYPE_VIDEO = 3;
+	private final static int SCAN_OK = 1;
 	
 	private String currentPath;
 	private AllFileAdapter mSimpleAdapter;
@@ -139,12 +145,12 @@ public class AllFileContentFragment extends BaseFragment {
 				//	System.out.println("按钮按下");
 					curentShowType = false;
 					userInfo.edit().putString("listOrGrid", "grid").commit(); 
-					refreshListItem(currentPath);
+					refreshListItem();
 				}else if(listOrGridPressed.equals("unpressed")){
 				//	System.out.println("按钮没有按下");
 					curentShowType = true;
 					userInfo.edit().putString("listOrGrid", "list").commit(); 
-					refreshListItem(currentPath);
+					refreshListItem();
 				}
             }  
 		}
@@ -181,8 +187,8 @@ public class AllFileContentFragment extends BaseFragment {
 //		}else if(getInfoString.equals("list")){
 //			curentShowType = true;
 //		}
-		refreshListItem(Environment.getExternalStorageDirectory() + File.separator);
 		currentPath = Environment.getExternalStorageDirectory() + "";
+		refreshListItem();
 		strMultiPathArray = new ArrayList<String>();
 		listFileView.setOnCreateContextMenuListener(this);
 		gridFileView.setOnCreateContextMenuListener(this);
@@ -246,21 +252,77 @@ public class AllFileContentFragment extends BaseFragment {
 		}
 	}
 	
-	public void refreshListItem(String path) {
-		showPathView.setText(path);
-		filelist = buildListForSimpleAdapter(path);
-		mSimpleAdapter = new AllFileAdapter(getActivity(), filelist,
-				R.layout.listrow_allfile, new String[] { "image", "name",
-						"modifytime", "path" }, new int[] { R.id.imageDir,
-						R.id.name, R.id.mdtime });
-		setCurrentFileView();
-		listFileView.setAdapter(mSimpleAdapter);
-		listFileView.setOnItemClickListener(mItemClickListener);
-		listFileView.setSelection(0);
-		gridFileView.setAdapter(mSimpleAdapter);
-		gridFileView.setOnItemClickListener(mItemClickListener);
-		gridFileView.setSelection(0);
+	private void refreshListItem() {
+//		if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+//			getActivity().Toast.makeText(this, "暂无外部存储", Toast.LENGTH_SHORT).show();
+//			return;
+//		}
+		
+		//显示进度条
+		//mProgressDialog = ProgressDialog.show(this, null, "正在加载...");
+		//防止viewpager滑动时childlist会有重复的数据
+//		if(childList != null){
+//			childList.clear();
+//		}
+//	
+	new Thread(new Runnable() {
+		
+		@Override
+		public void run() {
+			filelist = buildListForSimpleAdapter(currentPath);
+
+			//通知Handler扫描图片完成
+			mHandler.sendEmptyMessage(SCAN_OK);
+			
+		}
+	}).start();
+	
+}
+
+private Handler mHandler = new Handler(){
+
+	@Override
+	public void handleMessage(Message msg) {
+		super.handleMessage(msg);
+		switch (msg.what) {
+		case SCAN_OK:
+			//关闭进度条
+			//mProgressDialog.dismiss();
+			mSimpleAdapter = new AllFileAdapter(getActivity(), filelist,
+					R.layout.listview_allfile, new String[] { "image", "name",
+							"modifytime", "path" }, new int[] { R.id.imageDir,
+							R.id.name, R.id.mdtime });
+			setCurrentFileView();
+			showPathView.setText(currentPath);
+			listFileView.setAdapter(mSimpleAdapter);
+			listFileView.setOnItemClickListener(mItemClickListener);
+			listFileView.setSelection(0);
+			gridFileView.setAdapter(mSimpleAdapter);
+			gridFileView.setOnItemClickListener(mItemClickListener);
+			gridFileView.setSelection(0);
+			//adapter = new GroupAdapter(MainActivity.this, list, mGroupGridView);
+			//mGroupGridView.setAdapter(adapter);
+			break;
+		}
 	}
+	
+};
+	
+//	public void loadData(String path) {
+//		showPathView.setText(path);
+//		filelist = buildListForSimpleAdapter(path);
+//		mSimpleAdapter = new AllFileAdapter(getActivity(), filelist,
+//				R.layout.listview_allfile, new String[] { "image", "name",
+//						"modifytime", "path" }, new int[] { R.id.imageDir,
+//						R.id.name, R.id.mdtime });
+//		setCurrentFileView();
+//		listFileView.setAdapter(mSimpleAdapter);
+//		listFileView.setOnItemClickListener(mItemClickListener);
+//		listFileView.setSelection(0);
+//		gridFileView.setAdapter(mSimpleAdapter);
+//		gridFileView.setOnItemClickListener(mItemClickListener);
+//		gridFileView.setSelection(0);
+//	}
 
 	OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
 		@Override
@@ -283,7 +345,7 @@ public class AllFileContentFragment extends BaseFragment {
 				currentPath = (String) filelist.get(position).get("path");
 				File file = new File(currentPath);
 				if (file.isDirectory()) {
-					refreshListItem(currentPath);
+					refreshListItem();
 				} else if (file.isFile()) {
 					startOnFileTypes(file);
 					currentPath = file.getParentFile().getAbsolutePath();
@@ -387,7 +449,7 @@ public class AllFileContentFragment extends BaseFragment {
 		File file = new File(currentPath);
 		File str_pa = file.getParentFile();
 		currentPath = str_pa.getAbsolutePath();
-		refreshListItem(currentPath);
+		refreshListItem();
 
 	}
 
@@ -503,7 +565,7 @@ public class AllFileContentFragment extends BaseFragment {
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			myProgressDialog.dismiss();
-			refreshListItem(currentPath);
+			refreshListItem();
 			Toast.makeText(getActivity(), "操作完成!", Toast.LENGTH_SHORT).show();
 			registerForContextMenu(listFileView);
 			strMultiPathArray.clear();
@@ -533,7 +595,7 @@ public class AllFileContentFragment extends BaseFragment {
 									// TODO Auto-generated method stub
 									File file = new File(currentSelectPath);
 									FileUtil.deleteFileOrDir(file);
-									refreshListItem(currentPath);
+									refreshListItem();
 
 								}
 							}).setNegativeButton("取消", null).create();
@@ -572,7 +634,7 @@ public class AllFileContentFragment extends BaseFragment {
 									File newFile = null;
 									newFile = FileUtil.renameFile(file,
 											getFileName);
-									refreshListItem(currentPath);
+									refreshListItem();
 								}
 							}).setNegativeButton("取消", null).create();
 			return renameDialog;
@@ -610,7 +672,7 @@ public class AllFileContentFragment extends BaseFragment {
 										return;
 									}
 									file.mkdirs();
-									refreshListItem(currentPath);
+									refreshListItem();
 								}
 							}).setNegativeButton("取消", null).create();
 			return newFileFoldDialog;
@@ -724,7 +786,7 @@ public class AllFileContentFragment extends BaseFragment {
 			selectListMode = true;
 			multiSelectOption();
 		} else if (id == 3) {
-			refreshListItem(currentPath);
+			refreshListItem();
 		} else if (id == 4) {
 			selectedNum = 0;
 			selectedNumView.setText("已选择:"+selectedNum+"个");
@@ -748,10 +810,10 @@ public class AllFileContentFragment extends BaseFragment {
 			    public void onClick(DialogInterface dialog, int item) {
 			    	if(item == 0){
 						curentShowType = true;
-						refreshListItem(currentPath);
+						refreshListItem();
 			    	}else if(item == 1){
 						curentShowType = false;
-						refreshListItem(currentPath);
+						refreshListItem();
 			    	}
 
 			    }
@@ -987,5 +1049,6 @@ public class AllFileContentFragment extends BaseFragment {
 	@Override
 	public void loadListData() {
 		// TODO Auto-generated method stub
+		refreshListItem();
 	}
 }

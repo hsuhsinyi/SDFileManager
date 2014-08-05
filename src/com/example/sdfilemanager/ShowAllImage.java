@@ -1,9 +1,15 @@
 package com.example.sdfilemanager;
 
+import java.io.File;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -24,6 +30,22 @@ public class ShowAllImage extends Activity {
 		list = getIntent().getStringArrayListExtra("data");
 		adapter = new ShowAllImageAdapter(this, list, mGridView);
 		mGridView.setAdapter(adapter);
+		mGridView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				String imagePathString = list.get(position);
+				Intent intent = new Intent("android.intent.action.VIEW");
+				intent.addCategory("android.intent.category.DEFAULT");
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				Uri uri = Uri.fromFile(new File(imagePathString));
+				intent.setDataAndType(uri, "image/*");
+				startActivity(intent);
+				
+			}
+		});
 		
 	}
 

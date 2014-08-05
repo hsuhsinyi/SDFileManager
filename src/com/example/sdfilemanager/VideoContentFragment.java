@@ -65,9 +65,11 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ImageContentFragment extends BaseFragment{
+public class VideoContentFragment extends BaseFragment{
 	
+	private ListView listFileView;
 	List<Map<String, Object>> filelist = null;
+	private final String orgPath = Environment.getExternalStorageDirectory()+File.separator;
 	private long mExitTime = 0;
 	public static final int TYPE_AUDIO = 1;
 	public static final int TYPE_IMAGE = 2;
@@ -75,11 +77,18 @@ public class ImageContentFragment extends BaseFragment{
 	public static final int TYPE_APK = 4;
 	public CheckBox checkboxlistBox;
 	private String currentPath;
+	private Boolean selectListMode = false;
 	private List<ImageBean> list = new ArrayList<ImageBean>();
 	ImageGroupAdapter mImageSimpleAdapter;
+	private boolean imageListMode = false;
+	private boolean videoListMode = false;
+	private boolean audioListMode = false;
+	private boolean apkListMode = false;
+	private ProgressDialog mProgressDialog;
 	private final static int SCAN_OK = 1;
 	List<String> childList = null;
 	private HashMap<String, List<String>> mGruopMap = new HashMap<String, List<String>>();
+
 
     
 	@Override
@@ -95,9 +104,12 @@ public class ImageContentFragment extends BaseFragment{
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		View view = null;
-        view = inflater.inflate(R.layout.fragment_imagecontent, container, false); 
+        	imageListMode = true;
+        	view = inflater.inflate(R.layout.fragment_imagecontent, container, false); 
         	//System.out.println("imageMode!!!!");
-        return view;    
+        return view;  
+        
+	
 	}
 
 	@Override
@@ -124,13 +136,13 @@ public class ImageContentFragment extends BaseFragment{
 		
 		//显示进度条
 		//mProgressDialog = ProgressDialog.show(this, null, "正在加载...");
-		//防止viewpager滑动时childlist以及mGroupMpa会有重复的数据
+		//防止viewpager滑动时childlist会有重复的数据
 		if(childList != null){
 			childList.clear();
 		}
-		if(mGruopMap != null){
-			mGruopMap.clear();
-		}
+//		if(mGruopMap != null){
+//			mGruopMap.clear();
+//		}
 		
 		
 		new Thread(new Runnable() {
@@ -186,6 +198,7 @@ public class ImageContentFragment extends BaseFragment{
 				//关闭进度条
 				//mProgressDialog.dismiss();
 	        	GridView mGridView = (GridView)getActivity().findViewById(R.id.child_grid);
+	        	
 	        	mImageSimpleAdapter = new ImageGroupAdapter(getActivity(), list = subGroupOfImage(mGruopMap), mGridView);
 				mGridView.setAdapter(mImageSimpleAdapter);
 				mGridView.setOnItemClickListener(new OnItemClickListener() {

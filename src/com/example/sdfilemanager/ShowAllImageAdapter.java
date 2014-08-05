@@ -62,7 +62,7 @@ public class ShowAllImageAdapter extends BaseAdapter {
 		String path = list.get(position);
 		
 		if(convertView == null){
-			convertView = mInflater.inflate(R.layout.grid_imagecontent, null);
+			convertView = mInflater.inflate(R.layout.gridview_imagecontent, null);
 			viewHolder = new ViewHolder();
 			viewHolder.mImageView = (MyImageView) convertView.findViewById(R.id.child_image);
 

@@ -80,12 +80,12 @@ public class AllFileAdapter extends SimpleAdapter {
 		if (convertView == null) {
 			switch (show_type) {
 			case SHOW_LIST:
-				convertView = mLayoutInflater.inflate(R.layout.listrow_allfile, null);
+				convertView = mLayoutInflater.inflate(R.layout.listview_allfile, null);
 				System.out.println("show_list");
 				break;
 				
 			case SHOW_GRID:
-				convertView = mLayoutInflater.inflate(R.layout.grid_allfile, null);
+				convertView = mLayoutInflater.inflate(R.layout.gridview_allfile, null);
 				System.out.println("show_grid");
 				break;
 

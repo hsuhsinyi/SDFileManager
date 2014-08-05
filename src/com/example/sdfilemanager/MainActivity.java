@@ -72,11 +72,10 @@ public class MainActivity extends FragmentActivity {
 	private Resources resources;
 	private ScanPagerAdapter adapter;
 	private int screenW;
-	private Fragment activityfragment;
-	private Fragment groupFragment;
-	private Fragment friendsFragment;
-	private Fragment chatFragment;
-	private Fragment peopleFragment;
+	private Fragment allFileFragment;
+	private Fragment allImageFragment;
+	private Fragment allVideoFragment;
+
 	
 	View mConfirmOperationBar;
 	private LinearLayout linearLayout;
@@ -134,23 +133,16 @@ public class MainActivity extends FragmentActivity {
 		mPager = (ViewPager) findViewById(R.id.vPager);
 		fragmentsList = new ArrayList<Fragment>();
 		if (FileUtil.isSdCardAvailable()) {
-			activityfragment = new AllFileContentFragment();
-			groupFragment = ImageContentFragment
-					.newInstance(ImageContentFragment.TYPE_IMAGE);
-			friendsFragment = ImageContentFragment
-					.newInstance(ImageContentFragment.TYPE_VIDEO);
-//			chatFragment = AllMediaContentFragment
-//					.newInstance(AllMediaContentFragment.TYPE_AUDIO);
-//			peopleFragment = AllMediaContentFragment
-//					.newInstance(AllMediaContentFragment.TYPE_APK);
-			fragmentsList.add(activityfragment);
-			fragmentsList.add(groupFragment);
-			fragmentsList.add(friendsFragment);
-//			fragmentsList.add(chatFragment);
-//			fragmentsList.add(peopleFragment);
+			allFileFragment = new AllFileContentFragment();
+			allImageFragment = new ImageContentFragment();
+			allVideoFragment = new VideoContentFragment();
+
+			fragmentsList.add(allFileFragment);
+			fragmentsList.add(allImageFragment);
+			fragmentsList.add(allVideoFragment);
 		} else {
-			activityfragment = new StorageNotReadyFragment();
-			fragmentsList.add(activityfragment);
+			allFileFragment = new StorageNotReadyFragment();
+			fragmentsList.add(allFileFragment);
 		}
 
 		adapter = new ScanPagerAdapter(getSupportFragmentManager(),

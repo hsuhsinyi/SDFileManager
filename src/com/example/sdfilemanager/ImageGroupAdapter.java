@@ -16,6 +16,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.GridView;
@@ -32,23 +33,23 @@ public class ImageGroupAdapter extends BaseAdapter {
 	 */
 	private HashMap<Integer, Boolean> mSelectMap = new HashMap<Integer, Boolean>();
 	private GridView mGridView;
-	private List<ImageBean> list;
+	private List<ImageBean> mlist = null;
 	protected LayoutInflater mInflater;
 
 	public ImageGroupAdapter(Context context, List<ImageBean> list, GridView mGridView){
-		this.list = list;
+		this.mlist = list;
 		this.mGridView = mGridView;
 		mInflater = LayoutInflater.from(context);
 	}
 	
 	@Override
 	public int getCount() {
-		return list.size();
+		return mlist.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return list.get(position);
+		return mlist.get(position);
 	}
 
 
@@ -60,12 +61,12 @@ public class ImageGroupAdapter extends BaseAdapter {
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		final ViewHolder viewHolder;
-		ImageBean mImageBean = list.get(position);
+		ImageBean mImageBean = mlist.get(position);
 		String path = mImageBean.getTopImagePath();
 		
 		if(convertView == null){
 			viewHolder = new ViewHolder();
-			convertView = mInflater.inflate(R.layout.grid_imagegroup_, null);
+			convertView = mInflater.inflate(R.layout.gridview_imagegroup, null);
 			viewHolder.mImageView = (MyImageView) convertView.findViewById(R.id.group_image);
 			viewHolder.mTextViewTitle = (TextView) convertView.findViewById(R.id.group_title);
 			viewHolder.mTextViewCounts = (TextView) convertView.findViewById(R.id.group_count);

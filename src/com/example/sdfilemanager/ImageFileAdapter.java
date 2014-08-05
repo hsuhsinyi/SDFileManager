@@ -81,7 +81,7 @@ public class ImageFileAdapter extends SimpleAdapter {
 		ViewHolder holder = null;
 		if (convertView == null) {
 			holder = new ViewHolder();
-			convertView = mLayoutInflater.inflate(R.layout.listrow_media, null);
+			convertView = mLayoutInflater.inflate(R.layout.listview_media, null);
 			holder.listImageView = (ImageView) convertView
 					.findViewById(R.id.imageDir);
 			holder.listFileName = (TextView) convertView

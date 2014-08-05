@@ -62,8 +62,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="bottom"
-        android:gravity="center"
         android:background="@drawable/secondary_title_background"
+        android:gravity="center"
         android:visibility="invisible" >
 
         <Button
@@ -71,7 +71,6 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="0.50"
-            android:background="@drawable/button_select_display"
             android:text="粘贴" />
 
         <Button
@@ -79,7 +78,6 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="0.50"
-            android:background="@drawable/button_select_display"
             android:text="取消" />
     </LinearLayout>
 
@@ -90,8 +88,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="bottom"
-        android:orientation="horizontal"
         android:background="@drawable/secondary_title_background"
+        android:orientation="horizontal"
         android:visibility="invisible" >
 
         <TextView
@@ -100,75 +98,64 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_weight="0.20"
             android:singleLine="true" />
-        
+
         <FrameLayout
             android:id="@+id/button_cancel"
-            android:layout_weight="2.0"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent" >
+            android:layout_height="fill_parent"
+            android:layout_weight="2.0" >
 
             <ImageButton
                 android:id="@+id/multiselect_button_cancel"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:src="@drawable/operation_button_cancel"
-                android:background="@drawable/button_select_display" />
+                android:layout_weight="0.20"
+                android:src="@drawable/operation_button_cancel" />
         </FrameLayout>
-        
-    <FrameLayout
+
+        <FrameLayout
             android:id="@+id/button_cut"
-            android:layout_weight="2.0"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent" >
+            android:layout_height="fill_parent"
+            android:layout_weight="2.0" >
 
             <ImageButton
-                 android:id="@+id/multiselect_button_cut"
+                android:id="@+id/multiselect_button_cut"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:src="@drawable/operation_button_move"
-                android:background="@drawable/button_select_display" />
-
-
+                android:layout_weight="0.20"
+                android:src="@drawable/operation_button_move" />
         </FrameLayout>
 
-        
-        
         <FrameLayout
             android:id="@+id/button_delete"
-            android:layout_weight="2.0"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent" >
+            android:layout_height="fill_parent"
+            android:layout_weight="2.0" >
 
             <ImageButton
                 android:id="@+id/multiselect_button_delete"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:src="@drawable/operation_button_delete"
-                android:background="@drawable/button_select_display"/>
-
-
+                android:layout_weight="0.20"
+                android:src="@drawable/operation_button_delete" />
         </FrameLayout>
-        
-         <FrameLayout
+
+        <FrameLayout
             android:id="@+id/button_copy"
-            android:layout_weight="2.0"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent" >
+            android:layout_height="fill_parent"
+            android:layout_weight="2.0" >
 
             <ImageButton
                 android:id="@+id/multiselect_button_copy"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:src="@drawable/operation_button_copy"
-                android:background="@drawable/button_select_display"
-               />
-
- />
+                android:layout_weight="0.20"
+                android:src="@drawable/operation_button_copy" />
         </FrameLayout>
-
-
-
     </LinearLayout>
 
 </RelativeLayout>
