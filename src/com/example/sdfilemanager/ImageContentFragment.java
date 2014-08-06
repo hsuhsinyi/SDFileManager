@@ -10,11 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 
-
-
-
 import com.example.sdfilemanager.AllFileAdapter.ViewHolder;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -75,11 +73,15 @@ public class ImageContentFragment extends BaseFragment{
 	public static final int TYPE_APK = 4;
 	public CheckBox checkboxlistBox;
 	private String currentPath;
-	private List<ImageBean> list = new ArrayList<ImageBean>();
+	private List<ImageBean> list = null;
 	ImageGroupAdapter mImageSimpleAdapter;
 	private final static int SCAN_OK = 1;
+	private final static int SCAN_NOIMAGE = 0;
 	List<String> childList = null;
+	private ImageView noImageView;
+	GridView mGridView  = null;
 	private HashMap<String, List<String>> mGruopMap = new HashMap<String, List<String>>();
+
 
     
 	@Override
@@ -103,9 +105,20 @@ public class ImageContentFragment extends BaseFragment{
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
+		//mFileUtils = new FileUtils();
+		
+		if (null == list) {
+			list = new ArrayList<ImageBean>();
+		}
+		
+		mGridView = (GridView)getActivity().findViewById(R.id.child_grid);
+    	mImageSimpleAdapter = new ImageGroupAdapter(getActivity(), list, mGridView);
+		mGridView.setAdapter(mImageSimpleAdapter);
+
+		//mGridView.setAdapter(mImageSimpleAdapter);
 		super.onActivityCreated(savedInstanceState);
 
-		
+
 	}
 	
 	public void startloadListData(){
@@ -125,13 +138,7 @@ public class ImageContentFragment extends BaseFragment{
 		//显示进度条
 		//mProgressDialog = ProgressDialog.show(this, null, "正在加载...");
 		//防止viewpager滑动时childlist以及mGroupMpa会有重复的数据
-		if(childList != null){
-			childList.clear();
-		}
-		if(mGruopMap != null){
-			mGruopMap.clear();
-		}
-		
+
 		
 		new Thread(new Runnable() {
 			
@@ -160,6 +167,7 @@ public class ImageContentFragment extends BaseFragment{
 						childList = new ArrayList<String>();
 						childList.add(path);
 						mGruopMap.put(parentName, childList);
+						
 						System.out.println("i am here");
 					} else {
 						mGruopMap.get(parentName).add(path);
@@ -167,15 +175,20 @@ public class ImageContentFragment extends BaseFragment{
 				}
 				
 				mCursor.close();
-				
-				//通知Handler扫描图片完成
-				mHandler.sendEmptyMessage(SCAN_OK);
-				
+				list = subGroupOfImage(mGruopMap);
+				mImageSimpleAdapter.addImageGroup(list);
+				if(list == null){
+					mHandler.sendEmptyMessage(SCAN_NOIMAGE);
+				}else{
+					//通知Handler扫描图片完成
+					mHandler.sendEmptyMessage(SCAN_OK);
+				}	
 			}
 		}).start();
 		
 	}
 	
+	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler(){
 
 		@Override
@@ -185,9 +198,10 @@ public class ImageContentFragment extends BaseFragment{
 			case SCAN_OK:
 				//关闭进度条
 				//mProgressDialog.dismiss();
-	        	GridView mGridView = (GridView)getActivity().findViewById(R.id.child_grid);
-	        	mImageSimpleAdapter = new ImageGroupAdapter(getActivity(), list = subGroupOfImage(mGruopMap), mGridView);
-				mGridView.setAdapter(mImageSimpleAdapter);
+
+				
+				mImageSimpleAdapter.notifyDataSetChanged();
+				mGridView.setSelection(0);
 				mGridView.setOnItemClickListener(new OnItemClickListener() {
 
 					@Override
@@ -204,6 +218,11 @@ public class ImageContentFragment extends BaseFragment{
 				});
 				//adapter = new GroupAdapter(MainActivity.this, list, mGroupGridView);
 				//mGroupGridView.setAdapter(adapter);
+				break;
+				
+			case SCAN_NOIMAGE:
+				noImageView = (ImageView)getActivity().findViewById(R.id.noimage_view);
+				noImageView.setVisibility(View.VISIBLE);
 				break;
 			}
 		}

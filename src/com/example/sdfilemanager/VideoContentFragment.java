@@ -9,10 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
-
-
-
 import com.example.sdfilemanager.AllFileAdapter.ViewHolder;
 
 import android.app.Activity;
@@ -24,7 +20,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -65,11 +63,9 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class VideoContentFragment extends BaseFragment{
-	
-	private ListView listFileView;
+public class VideoContentFragment extends BaseFragment {
+
 	List<Map<String, Object>> filelist = null;
-	private final String orgPath = Environment.getExternalStorageDirectory()+File.separator;
 	private long mExitTime = 0;
 	public static final int TYPE_AUDIO = 1;
 	public static final int TYPE_IMAGE = 2;
@@ -77,26 +73,18 @@ public class VideoContentFragment extends BaseFragment{
 	public static final int TYPE_APK = 4;
 	public CheckBox checkboxlistBox;
 	private String currentPath;
-	private Boolean selectListMode = false;
-	private List<ImageBean> list = new ArrayList<ImageBean>();
 	ImageGroupAdapter mImageSimpleAdapter;
-	private boolean imageListMode = false;
-	private boolean videoListMode = false;
-	private boolean audioListMode = false;
-	private boolean apkListMode = false;
-	private ProgressDialog mProgressDialog;
+	VideoAdapter mVideoSimpleAdapter;
 	private final static int SCAN_OK = 1;
 	List<String> childList = null;
-	private HashMap<String, List<String>> mGruopMap = new HashMap<String, List<String>>();
+	ListView videoListView;
+	List<Map<String, Object>> mVideoInfo = new ArrayList<Map<String, Object>>();
 
 
-    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
-
 	}
 
 	@Override
@@ -104,187 +92,147 @@ public class VideoContentFragment extends BaseFragment{
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		View view = null;
-        	imageListMode = true;
-        	view = inflater.inflate(R.layout.fragment_imagecontent, container, false); 
-        	//System.out.println("imageMode!!!!");
-        return view;  
-        
-	
+		view = inflater.inflate(R.layout.fragment_videocontent, container,
+				false);
+		// System.out.println("imageMode!!!!");
+		return view;
+
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
+		if (null == mVideoInfo) {
+			mVideoInfo =  new ArrayList<Map<String, Object>>();
+		}
+		videoListView = (ListView) getActivity().findViewById(
+				R.id.video_list);
+		if(mVideoInfo == null){
+			System.out.println("mvideo is null");
+		}
+		mVideoSimpleAdapter = new VideoAdapter(getActivity(), mVideoInfo, videoListView);
+		videoListView.setAdapter(mVideoSimpleAdapter);
 		super.onActivityCreated(savedInstanceState);
 
-		
 	}
-	
-	public void startloadListData(){
-		getImagesList();
-	}
-	
 
-	/**
-	 * 利用ContentProvider扫描手机中的图片，此方法在运行在子线程中
-	 */
-	private void getImagesList() {
-//		if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-//			getActivity().Toast.makeText(this, "暂无外部存储", Toast.LENGTH_SHORT).show();
-//			return;
-//		}
-		
-		//显示进度条
-		//mProgressDialog = ProgressDialog.show(this, null, "正在加载...");
-		//防止viewpager滑动时childlist会有重复的数据
-		if(childList != null){
-			childList.clear();
-		}
-//		if(mGruopMap != null){
-//			mGruopMap.clear();
-//		}
-		
-		
+	public void startloadListData() {
+
+		getVideoList();
+
+	}
+
+	public void getVideoList() {
 		new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				Uri mImageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-				ContentResolver mContentResolver = getActivity().getContentResolver();
+				// 获取视频文件：
+				ContentResolver mContentResolver = getActivity()
+						.getContentResolver();
+				// ContentResolver contentResolver =
+				// mContext.getContentResolver();
+				String[] projection = new String[] { MediaStore.Video.Media.DATA };
+				Cursor mCursor = mContentResolver.query(
+						MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+						projection, null, null,
+						MediaStore.Video.Media.DEFAULT_SORT_ORDER);
+				mCursor.moveToFirst();
 
-				//只查询jpeg和png的图片
-				Cursor mCursor = mContentResolver.query(mImageUri, null,
-						MediaStore.Images.Media.MIME_TYPE + "=? or "
-								+ MediaStore.Images.Media.MIME_TYPE + "=?",
-						new String[] { "image/jpeg", "image/png" }, MediaStore.Images.Media.DATE_MODIFIED);
-				
 				while (mCursor.moveToNext()) {
-					//获取图片的路径
-					String path = mCursor.getString(mCursor
-							.getColumnIndex(MediaStore.Images.Media.DATA));
-					
-					//获取该图片的父路径名
-					String parentName = new File(path).getParentFile().getName();
+					// 获取图片的路径
+					Map<String, Object> map = new HashMap<String, Object>();
+					String videoPath = mCursor.getString(mCursor
+							.getColumnIndex(MediaStore.Video.Media.DATA));
+					File videoFile = new File(videoPath);
+					String videoNameString = videoFile.getName();
+					// String videoNameString = mCursor.getString(mCursor
+					// .getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME));
+					System.out.println("video path" + videoNameString);
 
-					
-					//根据父路径名将图片放入到mGruopMap中
-					if (!mGruopMap.containsKey(parentName)) {
-						childList = new ArrayList<String>();
-						childList.add(path);
-						mGruopMap.put(parentName, childList);
-						System.out.println("i am here");
-					} else {
-						mGruopMap.get(parentName).add(path);
-					}
+					Bitmap videoBitmap = getVideoThumbnail(videoPath, 100, 100,
+							MediaStore.Images.Thumbnails.MICRO_KIND);
+					map.put("videoimage", videoBitmap);
+					map.put("videoname", videoNameString);
+					mVideoInfo.add(map);
+					mVideoSimpleAdapter.addVideoList(mVideoInfo);
 				}
-				
+
 				mCursor.close();
-				
-				//通知Handler扫描图片完成
 				mHandler.sendEmptyMessage(SCAN_OK);
-				
 			}
 		}).start();
-		
+
 	}
-	
-	private Handler mHandler = new Handler(){
+
+	private Handler mHandler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			switch (msg.what) {
 			case SCAN_OK:
-				//关闭进度条
-				//mProgressDialog.dismiss();
-	        	GridView mGridView = (GridView)getActivity().findViewById(R.id.child_grid);
-	        	
-	        	mImageSimpleAdapter = new ImageGroupAdapter(getActivity(), list = subGroupOfImage(mGruopMap), mGridView);
-				mGridView.setAdapter(mImageSimpleAdapter);
-				mGridView.setOnItemClickListener(new OnItemClickListener() {
 
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
-						List<String> childList = mGruopMap.get(list.get(position).getFolderName());			
-						Intent mIntent = new Intent(getActivity(), ShowAllImage.class);
-						mIntent.putStringArrayListExtra("data", (ArrayList<String>)childList);
-						startActivity(mIntent);
-
-
-						
-					}
-				});
-				//adapter = new GroupAdapter(MainActivity.this, list, mGroupGridView);
-				//mGroupGridView.setAdapter(adapter);
+				mVideoSimpleAdapter.notifyDataSetChanged();
+				videoListView.setSelection(0);
 				break;
 			}
 		}
-		
+
 	};
-	
 
 	/**
-	 * 组装分组界面GridView的数据源，因为我们扫描手机的时候将图片信息放在HashMap中
-	 * 所以需要遍历HashMap将数据组装成List
+	 * 获取视频的缩略图 先通过ThumbnailUtils来创建一个视频的缩略图，然后再利用ThumbnailUtils来生成指定大小的缩略图。
+	 * 如果想要的缩略图的宽和高都小于MICRO_KIND，则类型要使用MICRO_KIND作为kind的值，这样会节省内存。
 	 * 
-	 * @param mGruopMap
-	 * @return
+	 * @param videoPath
+	 *            视频的路径
+	 * @param width
+	 *            指定输出视频缩略图的宽度
+	 * @param height
+	 *            指定输出视频缩略图的高度度
+	 * @param kind
+	 *            参照MediaStore.Images.Thumbnails类中的常量MINI_KIND和MICRO_KIND。
+	 *            其中，MINI_KIND: 512 x 384，MICRO_KIND: 96 x 96
+	 * @return 指定大小的视频缩略图
 	 */
-	private List<ImageBean> subGroupOfImage(HashMap<String, List<String>> mGruopMap){
-		if(mGruopMap.size() == 0){
-			return null;
-		}
-		List<ImageBean> list = new ArrayList<ImageBean>();
-		
-		Iterator<Map.Entry<String, List<String>>> it = mGruopMap.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, List<String>> entry = it.next();
-			ImageBean mImageBean = new ImageBean();
-			String key = entry.getKey();
-			List<String> value = entry.getValue();
-			
-			mImageBean.setFolderName(key);
-			mImageBean.setImageCounts(value.size());
-			mImageBean.setTopImagePath(value.get(0));//获取该组的第一张图片
-			
-			list.add(mImageBean);
-		}
-		
-		return list;
-		
+	private Bitmap getVideoThumbnail(String videoPath, int width, int height,
+			int kind) {
+		Bitmap bitmap = null;
+		// 获取视频的缩略图
+		bitmap = ThumbnailUtils.createVideoThumbnail(videoPath, kind);
+		bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height,
+				ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+		return bitmap;
 	}
-	
-	
 
-    
+
+
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			String currPath = currentPath + File.separator;
 			System.out.println(currPath);
-				if((System.currentTimeMillis() - mExitTime) > 2000){
-					Toast.makeText(getActivity(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
-					mExitTime = System.currentTimeMillis();
-				}else{
-					System.exit(0);
-				}	
+			if ((System.currentTimeMillis() - mExitTime) > 2000) {
+				Toast.makeText(getActivity(), "再按一次退出程序", Toast.LENGTH_SHORT)
+						.show();
+				mExitTime = System.currentTimeMillis();
+			} else {
+				System.exit(0);
+			}
 		}
 		return false;
 	}
 
-	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		// TODO Auto-generated method stub
 		super.onConfigurationChanged(newConfig);
 	}
-	
+
 	@Override
 	public void loadListData() {
 		// TODO Auto-generated method stub
 		startloadListData();
 	}
-
-
 
 }

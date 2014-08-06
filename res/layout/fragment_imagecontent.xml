@@ -21,9 +21,18 @@
         android:gravity="center"
         android:horizontalSpacing="5dip"
         android:listSelector="@android:color/transparent"
-        android:numColumns="auto_fit"
+        android:numColumns="2"
         android:stretchMode="columnWidth"
         android:verticalSpacing="5dip" >
     </GridView>
+    
+             <ImageView
+             android:id="@+id/noimage_view"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:visibility="invisible"
+             android:layout_centerHorizontal="true"
+             android:layout_centerVertical="true"
+             android:src="@drawable/sd_not_available" />
 
 </RelativeLayout>

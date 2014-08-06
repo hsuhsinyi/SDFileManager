@@ -12,18 +12,17 @@
         android:gravity="center_vertical"
         android:maxWidth="300dip" />
 
-    <GridView
-        android:id="@+id/child_grid"
+    <ListView
+        android:id="@+id/video_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:cacheColorHint="@android:color/transparent"
-        android:columnWidth="90dip"
         android:gravity="center"
         android:horizontalSpacing="5dip"
         android:listSelector="@android:color/transparent"
-        android:numColumns="auto_fit"
+        android:numColumns="3"
         android:stretchMode="columnWidth"
         android:verticalSpacing="5dip" >
-    </GridView>
+    </ListView>
 
 </RelativeLayout>

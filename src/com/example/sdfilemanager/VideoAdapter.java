@@ -9,6 +9,9 @@ import java.util.Map;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.media.ThumbnailUtils;
+import android.provider.MediaStore;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +19,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -26,29 +30,27 @@ import com.example.sdfilemanager.NativeImageLoader.NativeImageCallBack;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 
-public class ImageGroupAdapter extends BaseAdapter {
-	private Point mPoint = new Point(0, 0);//用来封装ImageView的宽和高的对象
-	/**
-	 * 用来存储图片的选中情况
-	 */
+public class VideoAdapter extends BaseAdapter {
+//	private Point mPoint = new Point(0, 0);//用来封装ImageView的宽和高的对象
+//	/**
+//	 * 用来存储图片的选中情况
+//	 */
 	private HashMap<Integer, Boolean> mSelectMap = new HashMap<Integer, Boolean>();
-	private GridView mGridView;
-	private List<ImageBean> mlist = null;
+	private ListView mListView;
+	private List<Map<String, Object>> mlist = null;
 	protected LayoutInflater mInflater;
 
-	public ImageGroupAdapter(Context context, List<ImageBean> list, GridView mGridView){
-		this.mlist = list;
-		this.mGridView = mGridView;
+	public VideoAdapter(Context context, List<Map<String, Object>> mVideoInfo, ListView videoListView){
+		this.mListView = videoListView;
+		this.mlist = mVideoInfo;
 		mInflater = LayoutInflater.from(context);
 	}
 	
+
+
 	@Override
 	public int getCount() {
 		return mlist.size();
-	}
-	
-	public void addImageGroup(List<ImageBean> list){
-		mlist = list;
 	}
 
 	@Override
@@ -56,6 +58,9 @@ public class ImageGroupAdapter extends BaseAdapter {
 		return mlist.get(position);
 	}
 
+	public void addVideoList(List<Map<String, Object>> list){
+		this.mlist = list;
+	}
 
 	@Override
 	public long getItemId(int position) {
@@ -65,51 +70,34 @@ public class ImageGroupAdapter extends BaseAdapter {
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		final ViewHolder viewHolder;
-		ImageBean mImageBean = mlist.get(position);
-		String path = mImageBean.getTopImagePath();
+		String videoName =  mlist.get(position).get("videoname").toString();
+		Bitmap videoBitmap = (Bitmap) mlist.get(position).get("videoimage");
 		
 		if(convertView == null){
 			viewHolder = new ViewHolder();
-			convertView = mInflater.inflate(R.layout.gridview_imagegroup, null);
-			viewHolder.mImageView = (MyImageView) convertView.findViewById(R.id.group_image);
-			viewHolder.mTextViewTitle = (TextView) convertView.findViewById(R.id.group_title);
-			viewHolder.mTextViewCounts = (TextView) convertView.findViewById(R.id.group_count);
+			convertView = mInflater.inflate(R.layout.listview_videocontent, null);
+			viewHolder.mImageView = (ImageView) convertView.findViewById(R.id.child_video);
+			viewHolder.mVideoName = (TextView) convertView.findViewById(R.id.video_name);
+//			viewHolder.mTextViewCounts = (TextView) convertView.findViewById(R.id.group_count);
 			
 			//用来监听ImageView的宽和高
-			viewHolder.mImageView.setOnMeasureListener(new OnMeasureListener() {
-				
-				@Override
-				public void onMeasureSize(int width, int height) {
-					mPoint.set(width, height);
-				}
-			});
-			
 			convertView.setTag(viewHolder);
 		}else{
 			viewHolder = (ViewHolder) convertView.getTag();
 			viewHolder.mImageView.setImageResource(R.drawable.friends_sends_pictures_no);
 		}
 		
-		viewHolder.mTextViewTitle.setText(mImageBean.getFolderName());
-		viewHolder.mTextViewCounts.setText(Integer.toString(mImageBean.getImageCounts()));
 		//给ImageView设置路径Tag,这是异步加载图片的小技巧
-		viewHolder.mImageView.setTag(path);
+		//viewHolder.mImageView.setTag(videoPath);
 		
+		//Bitmap videoBitmap = getVideoThumbnail(videoPath, 100, 100, MediaStore.Images.Thumbnails.MICRO_KIND);
 		
 		//利用NativeImageLoader类加载本地图片
-		Bitmap bitmap = NativeImageLoader.getInstance().loadNativeImage(path, mPoint, new NativeImageCallBack() {
-			
-			@Override
-			public void onImageLoader(Bitmap bitmap, String path) {
-				ImageView mImageView = (ImageView) mGridView.findViewWithTag(path);
-				if(bitmap != null && mImageView != null){
-					mImageView.setImageBitmap(bitmap);
-				}
-			}
-		});
+
 		
-		if(bitmap != null){
-			viewHolder.mImageView.setImageBitmap(bitmap);
+		if(videoBitmap != null){
+			viewHolder.mImageView.setImageBitmap(videoBitmap);
+			viewHolder.mVideoName.setText(videoName);
 		}else{
 			viewHolder.mImageView.setImageResource(R.drawable.friends_sends_pictures_no);
 		}
@@ -120,10 +108,11 @@ public class ImageGroupAdapter extends BaseAdapter {
 	
 	
 	public static class ViewHolder{
-		public MyImageView mImageView;
-		public TextView mTextViewTitle;
-		public TextView mTextViewCounts;
+		public ImageView mImageView;
+		public TextView mVideoName;
+//		public TextView mTextViewCounts;
 	}
+	
 
 
 
