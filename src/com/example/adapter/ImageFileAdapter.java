@@ -1,4 +1,4 @@
-package com.example.sdfilemanager;
+package com.example.adapter;
 
 import java.io.File;
 import java.sql.Date;
@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.example.sdfilemanager.R;
 
 import android.content.Context;
 import android.graphics.Bitmap;

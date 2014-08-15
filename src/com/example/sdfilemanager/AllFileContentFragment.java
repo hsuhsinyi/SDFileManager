@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.sdfilemanager.AllFileAdapter.ViewHolder;
+import com.example.adapter.*;
 
 import android.R.integer;
 import android.annotation.SuppressLint;
@@ -1042,8 +1042,10 @@ private Handler mHandler = new Handler(){
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
+
 		super.onDestroy();
-		getActivity().unregisterReceiver(MyBroadcastReceiver);
+		
+		//getActivity().unregisterReceiver(MyBroadcastReceiver);
 	}
 
 	@Override

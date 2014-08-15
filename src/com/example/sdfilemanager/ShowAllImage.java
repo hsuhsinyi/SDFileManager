@@ -3,6 +3,8 @@ package com.example.sdfilemanager;
 import java.io.File;
 import java.util.List;
 
+import com.example.adapter.ShowAllImageAdapter;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;

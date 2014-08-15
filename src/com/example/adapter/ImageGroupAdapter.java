@@ -1,4 +1,4 @@
-package com.example.sdfilemanager;
+package com.example.adapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,10 +21,13 @@ import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.GridView;
 
+import com.example.sdfilemanager.ImageBean;
+import com.example.sdfilemanager.MyImageView;
 import com.example.sdfilemanager.MyImageView.OnMeasureListener;
+import com.example.sdfilemanager.NativeImageLoader;
 import com.example.sdfilemanager.NativeImageLoader.NativeImageCallBack;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
+import com.example.sdfilemanager.R;
+
 
 public class ImageGroupAdapter extends BaseAdapter {
 	private Point mPoint = new Point(0, 0);//用来封装ImageView的宽和高的对象

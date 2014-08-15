@@ -9,7 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.example.sdfilemanager.AllFileAdapter.ViewHolder;
+import com.example.adapter.ImageGroupAdapter;
+import com.example.adapter.VideoAdapter;
+import com.example.adapter.*;
 
 import android.app.Activity;
 import android.app.AlertDialog;
